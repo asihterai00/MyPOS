@@ -1,320 +1,895 @@
--- =====================================================
--- AMSA POS Database - MySQL/MariaDB
--- Database: amsa_pos
--- User: root / Password: root
--- =====================================================
+-- --------------------------------------------------------
+-- Host:                         127.0.0.1
+-- Server version:               12.1.2-MariaDB - MariaDB Server
+-- Server OS:                    Win64
+-- HeidiSQL Version:             12.14.0.7165
+-- --------------------------------------------------------
 
--- Buat database jika belum ada
-CREATE DATABASE IF NOT EXISTS `amsa_pos` 
-CHARACTER SET utf8mb4 
-COLLATE utf8mb4_unicode_ci;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-USE `amsa_pos`;
 
--- =====================================================
--- TABEL: categories
--- =====================================================
-DROP TABLE IF EXISTS `categories`;
-CREATE TABLE `categories` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(100) NOT NULL,
-    `description` TEXT,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Dumping database structure for db_mypos
+CREATE DATABASE IF NOT EXISTS `db_mypos` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci */;
+USE `db_mypos`;
 
--- =====================================================
--- TABEL: vendors
--- =====================================================
-DROP TABLE IF EXISTS `vendors`;
-CREATE TABLE `vendors` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(200) NOT NULL,
-    `contact_person` VARCHAR(100),
-    `phone` VARCHAR(20),
-    `email` VARCHAR(100),
-    `address` TEXT,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Dumping structure for table db_mypos.m_categories
+CREATE TABLE IF NOT EXISTS `m_categories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `icon` varchar(255) DEFAULT NULL,
+  `delete_status` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- =====================================================
--- TABEL: customers
--- =====================================================
-DROP TABLE IF EXISTS `customers`;
-CREATE TABLE `customers` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(200) NOT NULL,
-    `phone` VARCHAR(20),
-    `email` VARCHAR(100),
-    `address` TEXT,
-    `points` INT DEFAULT 0,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Dumping data for table db_mypos.m_categories: ~8 rows (approximately)
+INSERT INTO `m_categories` (`id`, `name`, `description`, `icon`, `delete_status`, `created_at`, `updated_at`) VALUES
+	(1, 'Beverages', 'Premium Beverages', NULL, 0, '2026-01-10 17:08:29', '2026-01-10 17:08:29'),
+	(2, 'Snacks', 'Premium Snacks', NULL, 0, '2026-01-10 17:08:29', '2026-01-10 17:08:29'),
+	(3, 'Groceries', 'Premium Groceries', NULL, 0, '2026-01-10 17:08:29', '2026-01-10 17:08:29'),
+	(4, 'Dairy', 'Premium Dairy', NULL, 0, '2026-01-10 17:08:29', '2026-01-10 17:08:29'),
+	(5, 'Bakery', 'Premium Bakery', NULL, 0, '2026-01-10 17:08:29', '2026-01-10 17:08:29'),
+	(6, 'Household', 'Premium Household', NULL, 0, '2026-01-10 17:08:29', '2026-01-10 17:08:29'),
+	(7, 'Electronics', 'Premium Electronics', NULL, 0, '2026-01-10 17:08:30', '2026-01-10 17:08:30'),
+	(8, 'Apparel', 'Premium Apparel', NULL, 0, '2026-01-10 17:08:30', '2026-01-10 17:08:30');
 
--- =====================================================
--- TABEL: products
--- =====================================================
-DROP TABLE IF EXISTS `products`;
-CREATE TABLE `products` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `sku` VARCHAR(50) UNIQUE,
-    `name` VARCHAR(200) NOT NULL,
-    `description` TEXT,
-    `category_id` INT,
-    `price` DECIMAL(10,2) NOT NULL DEFAULT 0,
-    `cost` DECIMAL(10,2) DEFAULT 0,
-    `stock` INT DEFAULT 0,
-    `min_stock` INT DEFAULT 5,
-    `unit` VARCHAR(20) DEFAULT 'pcs',
-    `image_url` VARCHAR(500),
-    `is_active` BOOLEAN DEFAULT TRUE,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Dumping structure for table db_mypos.m_customers
+CREATE TABLE IF NOT EXISTS `m_customers` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `delete_status` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- =====================================================
--- TABEL: purchase_orders
--- =====================================================
-DROP TABLE IF EXISTS `purchase_orders`;
-CREATE TABLE `purchase_orders` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `po_number` VARCHAR(50) UNIQUE NOT NULL,
-    `vendor_id` INT,
-    `order_date` DATE NOT NULL,
-    `expected_date` DATE,
-    `status` ENUM('pending', 'received', 'cancelled') DEFAULT 'pending',
-    `total_amount` DECIMAL(10,2) DEFAULT 0,
-    `notes` TEXT,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (`vendor_id`) REFERENCES `vendors`(`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Dumping data for table db_mypos.m_customers: ~5 rows (approximately)
+INSERT INTO `m_customers` (`id`, `name`, `phone`, `email`, `address`, `notes`, `delete_status`, `created_at`, `updated_at`) VALUES
+	(1, 'Budi Santoso', '08123', NULL, NULL, NULL, 0, '2026-01-10 17:08:30', '2026-01-10 17:08:30'),
+	(2, 'Siti Aminah', '08198', NULL, NULL, NULL, 0, '2026-01-10 17:08:30', '2026-01-10 17:08:30'),
+	(3, 'Toko Maju', '02155', NULL, NULL, NULL, 0, '2026-01-10 17:08:30', '2026-01-10 17:08:30'),
+	(4, 'Andi Wijaya', '08561', NULL, NULL, NULL, 0, '2026-01-10 17:08:30', '2026-01-10 17:08:30'),
+	(5, 'Dewi Sartika', '08112', NULL, NULL, NULL, 0, '2026-01-10 17:08:30', '2026-01-10 17:08:30');
 
--- =====================================================
--- TABEL: purchase_order_items
--- =====================================================
-DROP TABLE IF EXISTS `purchase_order_items`;
-CREATE TABLE `purchase_order_items` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `po_id` INT NOT NULL,
-    `product_id` INT NOT NULL,
-    `quantity` INT NOT NULL,
-    `unit_price` DECIMAL(10,2) NOT NULL,
-    `subtotal` DECIMAL(10,2) NOT NULL,
-    `received_quantity` INT DEFAULT 0,
-    FOREIGN KEY (`po_id`) REFERENCES `purchase_orders`(`id`) ON DELETE CASCADE,
-    FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Dumping structure for table db_mypos.m_product_units
+CREATE TABLE IF NOT EXISTS `m_product_units` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `product_id` int(11) NOT NULL,
+  `unit_name` varchar(50) NOT NULL,
+  `unit_level` int(11) DEFAULT 1,
+  `conversion_factor` decimal(10,4) DEFAULT 1.0000,
+  `is_base_unit` tinyint(1) DEFAULT 0,
+  `cost_price` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `sell_price` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `price` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `stock` decimal(15,4) DEFAULT 0.0000,
+  `min_stock` decimal(15,4) DEFAULT 0.0000,
+  `safety_stock` decimal(15,4) DEFAULT 0.0000,
+  `red_pct` int(11) DEFAULT 0,
+  `yellow_pct` int(11) DEFAULT 0,
+  `green_pct` int(11) DEFAULT 0,
+  `barcode` varchar(100) DEFAULT NULL,
+  `delete_status` tinyint(1) DEFAULT 0,
+  `delete_date` datetime DEFAULT NULL,
+  `created_date` datetime DEFAULT current_timestamp(),
+  `updated_date` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `product_id` (`product_id`),
+  CONSTRAINT `1` FOREIGN KEY (`product_id`) REFERENCES `m_products` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- =====================================================
--- TABEL: users
--- =====================================================
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `username` VARCHAR(50) UNIQUE NOT NULL,
-    `password_hash` VARCHAR(255) NOT NULL,
-    `full_name` VARCHAR(100) NOT NULL,
-    `role` ENUM('admin', 'cashier', 'manager') DEFAULT 'cashier',
-    `is_active` BOOLEAN DEFAULT TRUE,
-    `last_login` TIMESTAMP NULL,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Dumping data for table db_mypos.m_product_units: ~23 rows (approximately)
+INSERT INTO `m_product_units` (`id`, `product_id`, `unit_name`, `unit_level`, `conversion_factor`, `is_base_unit`, `cost_price`, `sell_price`, `price`, `stock`, `min_stock`, `safety_stock`, `red_pct`, `yellow_pct`, `green_pct`, `barcode`, `delete_status`, `delete_date`, `created_date`, `updated_date`) VALUES
+	(1, 1, 'Piece', 1, 1.0000, 0, 2800.00, 0.00, 3500.00, 1200.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:31', NULL),
+	(2, 1, 'Pack', 2, 1.0000, 0, 33000.00, 0.00, 42000.00, 100.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:32', NULL),
+	(3, 1, 'Karton', 3, 1.0000, 0, 125000.00, 0.00, 160000.00, 25.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:32', NULL),
+	(4, 2, 'Botol', 1, 1.0000, 0, 2500.00, 0.00, 4000.00, 800.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:32', NULL),
+	(5, 2, 'Pack', 2, 1.0000, 0, 28000.00, 0.00, 45000.00, 80.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:32', NULL),
+	(6, 2, 'Dus', 3, 1.0000, 0, 110000.00, 0.00, 170000.00, 20.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:32', NULL),
+	(7, 3, 'Botol', 1, 1.0000, 0, 12000.00, 0.00, 18000.00, 300.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:32', NULL),
+	(8, 3, 'Pack', 2, 1.0000, 0, 68000.00, 0.00, 100000.00, 40.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:32', NULL),
+	(9, 4, 'Kg', 1, 1.0000, 0, 14000.00, 0.00, 18000.00, 500.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:32', NULL),
+	(10, 4, 'Sak', 2, 1.0000, 0, 680000.00, 0.00, 850000.00, 15.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:32', NULL),
+	(11, 5, 'Butir', 1, 1.0000, 0, 2200.00, 0.00, 2800.00, 2000.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:32', NULL),
+	(12, 5, 'Kg', 2, 1.0000, 0, 28000.00, 0.00, 35000.00, 150.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:32', NULL),
+	(13, 5, 'Tray', 3, 1.0000, 0, 63000.00, 0.00, 80000.00, 50.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:32', NULL),
+	(14, 6, 'Batang', 1, 1.0000, 0, 1200.00, 0.00, 1800.00, 500.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:32', NULL),
+	(15, 6, 'Bungkus', 2, 1.0000, 0, 28000.00, 0.00, 35000.00, 200.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:32', NULL),
+	(16, 6, 'Slop', 3, 1.0000, 0, 270000.00, 0.00, 340000.00, 30.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:32', NULL),
+	(17, 7, 'Piece', 1, 1.0000, 0, 4500.00, 0.00, 7000.00, 400.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:33', NULL),
+	(18, 7, 'Pack', 2, 1.0000, 0, 42000.00, 0.00, 65000.00, 60.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:33', NULL),
+	(19, 8, 'Botol', 1, 1.0000, 0, 32000.00, 0.00, 42000.00, 200.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:33', NULL),
+	(20, 8, 'Dus', 2, 1.0000, 0, 180000.00, 0.00, 240000.00, 25.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:33', NULL),
+	(21, 10, 'Sachet', 1, 1.0000, 0, 1500.00, 0.00, 2500.00, 1500.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:33', NULL),
+	(22, 10, 'Renceng', 2, 1.0000, 0, 14000.00, 0.00, 23000.00, 120.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:33', NULL),
+	(23, 10, 'Box', 3, 1.0000, 0, 135000.00, 0.00, 220000.00, 20.0000, 0.0000, 0.0000, 0, 0, 0, NULL, 0, NULL, '2026-01-11 00:08:33', NULL);
 
--- =====================================================
--- TABEL: sales
--- =====================================================
-DROP TABLE IF EXISTS `sales`;
-CREATE TABLE `sales` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `invoice_number` VARCHAR(50) UNIQUE NOT NULL,
-    `customer_id` INT,
-    `user_id` INT,
-    `sale_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `subtotal` DECIMAL(10,2) NOT NULL DEFAULT 0,
-    `discount` DECIMAL(10,2) DEFAULT 0,
-    `tax` DECIMAL(10,2) DEFAULT 0,
-    `total` DECIMAL(10,2) NOT NULL DEFAULT 0,
-    `payment_method` ENUM('cash', 'card', 'qris', 'transfer') DEFAULT 'cash',
-    `payment_status` ENUM('paid', 'partial', 'pending') DEFAULT 'paid',
-    `amount_paid` DECIMAL(10,2) DEFAULT 0,
-    `change_amount` DECIMAL(10,2) DEFAULT 0,
-    `notes` TEXT,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (`customer_id`) REFERENCES `customers`(`id`) ON DELETE SET NULL,
-    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Dumping structure for table db_mypos.m_products
+CREATE TABLE IF NOT EXISTS `m_products` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(50) NOT NULL,
+  `barcode` varchar(100) DEFAULT NULL,
+  `name` varchar(200) NOT NULL,
+  `alias_1` varchar(100) DEFAULT NULL,
+  `alias_2` varchar(100) DEFAULT NULL,
+  `category` varchar(100) DEFAULT NULL,
+  `category_id` int(11) DEFAULT NULL,
+  `vendor_id` int(11) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `photo_path` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `delete_status` tinyint(1) DEFAULT 0,
+  `delete_date` datetime DEFAULT NULL,
+  `created_date` datetime DEFAULT current_timestamp(),
+  `updated_date` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `code` (`code`),
+  KEY `category_id` (`category_id`),
+  KEY `vendor_id` (`vendor_id`),
+  CONSTRAINT `1` FOREIGN KEY (`category_id`) REFERENCES `m_categories` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `2` FOREIGN KEY (`vendor_id`) REFERENCES `m_vendors` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- =====================================================
--- TABEL: sale_items
--- =====================================================
-DROP TABLE IF EXISTS `sale_items`;
-CREATE TABLE `sale_items` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `sale_id` INT NOT NULL,
-    `product_id` INT NOT NULL,
-    `quantity` INT NOT NULL,
-    `unit_price` DECIMAL(10,2) NOT NULL,
-    `subtotal` DECIMAL(10,2) NOT NULL,
-    `discount` DECIMAL(10,2) DEFAULT 0,
-    FOREIGN KEY (`sale_id`) REFERENCES `sales`(`id`) ON DELETE CASCADE,
-    FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Dumping data for table db_mypos.m_products: ~10 rows (approximately)
+INSERT INTO `m_products` (`id`, `code`, `barcode`, `name`, `alias_1`, `alias_2`, `category`, `category_id`, `vendor_id`, `description`, `photo_path`, `is_active`, `delete_status`, `delete_date`, `created_date`, `updated_date`) VALUES
+	(1, '1001', NULL, 'Indomie Goreng', NULL, NULL, NULL, 8, 5, NULL, NULL, 1, 0, NULL, '2026-01-11 00:08:31', NULL),
+	(2, '1002', NULL, 'Aqua 600ml', NULL, NULL, NULL, 5, 3, NULL, NULL, 1, 0, NULL, '2026-01-11 00:08:31', NULL),
+	(3, '1003', NULL, 'Coca Cola 1.5L', NULL, NULL, NULL, 3, 4, NULL, NULL, 1, 0, NULL, '2026-01-11 00:08:31', NULL),
+	(4, '1004', NULL, 'Beras Rojolele 5kg', NULL, NULL, NULL, 7, 5, NULL, NULL, 1, 0, NULL, '2026-01-11 00:08:31', NULL),
+	(5, '1005', NULL, 'Telur Ayam', NULL, NULL, NULL, 3, 3, NULL, NULL, 1, 0, NULL, '2026-01-11 00:08:31', NULL),
+	(6, '1006', NULL, 'Rokok Sampoerna Mild', NULL, NULL, NULL, 4, 2, NULL, NULL, 1, 0, NULL, '2026-01-11 00:08:31', NULL),
+	(7, '1007', NULL, 'Sabun Lifebuoy', NULL, NULL, NULL, 2, 5, NULL, NULL, 1, 0, NULL, '2026-01-11 00:08:31', NULL),
+	(8, '1008', NULL, 'Minyak Goreng Bimoli 2L', NULL, NULL, NULL, 1, 2, NULL, NULL, 1, 0, NULL, '2026-01-11 00:08:31', NULL),
+	(9, '1009', NULL, 'Gula Pasir Gulaku 1kg', NULL, NULL, NULL, 4, 2, NULL, NULL, 1, 0, NULL, '2026-01-11 00:08:31', NULL),
+	(10, '1010', NULL, 'Kopi Kapal Api Mix', NULL, NULL, NULL, 4, 3, NULL, NULL, 1, 0, NULL, '2026-01-11 00:08:31', NULL);
 
--- =====================================================
--- SEED DATA: Categories
--- =====================================================
-INSERT INTO `categories` (`name`, `description`) VALUES
-('Makanan', 'Produk makanan dan snack'),
-('Minuman', 'Produk minuman'),
-('Elektronik', 'Produk elektronik dan gadget'),
-('Pakaian', 'Pakaian dan aksesoris'),
-('Kebutuhan Rumah Tangga', 'Perlengkapan rumah tangga');
+-- Dumping structure for table db_mypos.m_user_logs
+CREATE TABLE IF NOT EXISTS `m_user_logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `login_time` datetime DEFAULT current_timestamp(),
+  `logout_time` datetime DEFAULT NULL,
+  `duration_seconds` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `1` FOREIGN KEY (`user_id`) REFERENCES `m_users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- =====================================================
--- SEED DATA: Vendors
--- =====================================================
-INSERT INTO `vendors` (`name`, `contact_person`, `phone`, `email`, `address`) VALUES
-('PT Sumber Makmur', 'Budi Santoso', '081234567890', 'budi@sumbermakmur.com', 'Jakarta'),
-('CV Jaya Abadi', 'Siti Nurhaliza', '081234567891', 'siti@jayaabadi.com', 'Bandung'),
-('Toko Elektronik Maju', 'Ahmad Wijaya', '081234567892', 'ahmad@elektronikmaju.com', 'Surabaya');
+-- Dumping data for table db_mypos.m_user_logs: ~22 rows (approximately)
+INSERT INTO `m_user_logs` (`id`, `user_id`, `login_time`, `logout_time`, `duration_seconds`) VALUES
+	(1, 1, '2026-01-11 00:20:52', '2026-01-11 00:21:27', 35),
+	(2, 1, '2026-01-11 00:30:40', '2026-01-11 00:31:44', 64),
+	(3, 1, '2026-01-11 00:53:35', NULL, NULL),
+	(4, 1, '2026-01-11 00:58:56', '2026-01-11 01:10:34', 698),
+	(5, 1, '2026-01-11 10:43:25', NULL, NULL),
+	(6, 1, '2026-01-11 10:47:46', NULL, NULL),
+	(7, 1, '2026-01-11 10:50:35', NULL, NULL),
+	(8, 1, '2026-01-11 11:08:58', NULL, NULL),
+	(9, 1, '2026-02-02 23:22:15', '2026-02-02 23:23:54', 99),
+	(10, 1, '2026-02-02 23:26:44', '2026-02-02 23:28:43', 119),
+	(11, 1, '2026-02-02 23:29:35', '2026-02-02 23:32:23', 168),
+	(12, 1, '2026-02-02 23:33:43', '2026-02-02 23:37:07', 204),
+	(13, 1, '2026-02-02 23:36:11', '2026-02-02 23:37:10', 59),
+	(14, 1, '2026-02-02 23:43:25', '2026-02-02 23:43:37', 12),
+	(15, 1, '2026-02-02 23:44:17', '2026-02-02 23:46:54', 157),
+	(16, 1, '2026-02-02 23:49:12', '2026-02-02 23:51:22', 130),
+	(17, 1, '2026-02-02 23:52:01', '2026-02-02 23:53:55', 114),
+	(18, 1, '2026-02-02 23:56:05', '2026-02-02 23:59:41', 216),
+	(19, 1, '2026-02-03 00:03:29', '2026-02-03 00:03:52', 23),
+	(20, 1, '2026-02-03 00:06:06', '2026-02-03 00:06:34', 28),
+	(21, 1, '2026-02-15 16:44:57', NULL, NULL),
+	(22, 1, '2026-04-25 19:20:29', NULL, NULL);
 
--- =====================================================
--- SEED DATA: Customers
--- =====================================================
-INSERT INTO `customers` (`name`, `phone`, `email`, `address`, `points`) VALUES
-('Umum', '-', '-', '-', 0),
-('John Doe', '081234567893', 'john@email.com', 'Jakarta Selatan', 100),
-('Jane Smith', '081234567894', 'jane@email.com', 'Bandung', 250),
-('Bob Williams', '081234567895', 'bob@email.com', 'Surabaya', 50);
+-- Dumping structure for table db_mypos.m_users
+CREATE TABLE IF NOT EXISTS `m_users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `role` enum('Cashier','Supervisor','Manager','Admin') NOT NULL,
+  `full_name` varchar(100) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `employee_id` varchar(50) DEFAULT NULL,
+  `photo_path` varchar(255) DEFAULT NULL,
+  `last_login` datetime DEFAULT NULL,
+  `total_login_seconds` int(11) DEFAULT 0,
+  `delete_status` tinyint(1) DEFAULT 0,
+  `created_date` datetime DEFAULT current_timestamp(),
+  `updated_date` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `address` text DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `created_by` varchar(50) DEFAULT NULL,
+  `updated_by` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- =====================================================
--- SEED DATA: Products
--- =====================================================
-INSERT INTO `products` (`sku`, `name`, `description`, `category_id`, `price`, `cost`, `stock`, `min_stock`, `unit`) VALUES
-('SNK001', 'Keripik Kentang', 'Keripik kentang rasa original 100g', 1, 15000, 10000, 50, 10, 'pcs'),
-('SNK002', 'Coklat Batang', 'Coklat susu 50g', 1, 12000, 8000, 100, 20, 'pcs'),
-('MNM001', 'Air Mineral 600ml', 'Air mineral kemasan 600ml', 2, 5000, 3000, 200, 50, 'pcs'),
-('MNM002', 'Kopi Susu', 'Kopi susu kemasan 250ml', 2, 8000, 5000, 75, 15, 'pcs'),
-('MNM003', 'Jus Jeruk', 'Jus jeruk segar 250ml', 2, 10000, 6000, 60, 10, 'pcs'),
-('ELK001', 'Mouse Wireless', 'Mouse wireless USB', 3, 85000, 60000, 30, 5, 'pcs'),
-('ELK002', 'Keyboard Mechanical', 'Keyboard mechanical RGB', 3, 450000, 350000, 15, 3, 'pcs'),
-('PAK001', 'Kaos Polos Hitam', 'Kaos polos cotton 100% L', 4, 50000, 30000, 40, 10, 'pcs'),
-('PAK002', 'Topi Baseball', 'Topi baseball adjustable', 4, 35000, 20000, 25, 5, 'pcs'),
-('RTH001', 'Sabun Cuci Piring', 'Sabun cuci piring 800ml', 5, 18000, 12000, 80, 20, 'pcs'),
-('RTH002', 'Tisu Basah', 'Tisu basah anti bakteri 80 sheets', 5, 12000, 8000, 100, 25, 'pcs');
+-- Dumping data for table db_mypos.m_users: ~4 rows (approximately)
+INSERT INTO `m_users` (`id`, `username`, `password_hash`, `role`, `full_name`, `phone`, `employee_id`, `photo_path`, `last_login`, `total_login_seconds`, `delete_status`, `created_date`, `updated_date`, `address`, `notes`, `created_by`, `updated_by`) VALUES
+	(1, 'admin', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'Admin', 'Admin User', NULL, NULL, NULL, '2026-04-25 19:20:29', 2126, 0, '2026-01-11 00:08:29', '2026-04-25 19:20:29', NULL, NULL, NULL, NULL),
+	(2, 'cashier', '6a3ef924cb19135103c1e5697a04a926209911a8cd45734773fac25454e691a0', 'Cashier', 'Operator User', NULL, NULL, NULL, NULL, 0, 0, '2026-01-11 00:08:29', '2026-02-02 22:55:02', NULL, NULL, NULL, NULL),
+	(3, 'spv', '037571fc1b2e5009cd4f477c93174e67525d3c068e793f87c10c4f4996455e87', 'Supervisor', 'Supervisor User', NULL, NULL, NULL, NULL, 0, 0, '2026-01-11 00:08:29', NULL, NULL, NULL, NULL, NULL),
+	(4, 'manager', 'fabc440a5a8aa54d4240144820b710d2f9307f70c68628b3c1abdd6658cdd20b', 'Manager', 'Manager User', NULL, NULL, NULL, NULL, 0, 0, '2026-01-11 00:08:29', NULL, NULL, NULL, NULL, NULL);
 
--- =====================================================
--- SEED DATA: Users
--- Password default: admin123 (hash sederhana untuk demo)
--- Dalam produksi, gunakan password hashing yang lebih aman
--- =====================================================
-INSERT INTO `users` (`username`, `password_hash`, `full_name`, `role`) VALUES
-('admin', '$2a$10$XQxvN8h3F5z1K2p9L4m6nO.qR7sT8uV9wX0yZ1aB2cD3eF4gH5iJ6', 'Administrator', 'admin'),
-('cashier1', '$2a$10$XQxvN8h3F5z1K2p9L4m6nO.qR7sT8uV9wX0yZ1aB2cD3eF4gH5iJ6', 'Kasir 1', 'cashier'),
-('cashier2', '$2a$10$XQxvN8h3F5z1K2p9L4m6nO.qR7sT8uV9wX0yZ1aB2cD3eF4gH5iJ6', 'Kasir 2', 'cashier');
+-- Dumping structure for table db_mypos.m_vendors
+CREATE TABLE IF NOT EXISTS `m_vendors` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `contact_person` varchar(100) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `delete_status` tinyint(1) DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Catatan: Untuk simplicity dalam demo, password hash di atas adalah placeholder
--- Aplikasi C# akan menggunakan verifikasi password sederhana atau implementasi BCrypt
+-- Dumping data for table db_mypos.m_vendors: ~5 rows (approximately)
+INSERT INTO `m_vendors` (`id`, `name`, `contact_person`, `phone`, `email`, `address`, `notes`, `delete_status`, `created_at`, `updated_at`) VALUES
+	(1, 'PT. Sumber Makmur', NULL, '021-5551234', NULL, NULL, NULL, 0, '2026-01-10 17:08:30', '2026-01-10 17:08:30'),
+	(2, 'CV. Aneka Minuman', NULL, '0812-3333', NULL, NULL, NULL, 0, '2026-01-10 17:08:30', '2026-01-10 17:08:30'),
+	(3, 'UD. Sayur Segar', NULL, '0813-9876', NULL, NULL, NULL, 0, '2026-01-10 17:08:30', '2026-01-10 17:08:30'),
+	(4, 'PT. Indo Food Supplies', NULL, '021-8899', NULL, NULL, NULL, 0, '2026-01-10 17:08:30', '2026-01-10 17:08:30'),
+	(5, 'Global Tech Dist.', NULL, '021-4455', NULL, NULL, NULL, 0, '2026-01-10 17:08:30', '2026-01-10 17:08:30');
 
--- =====================================================
--- VIEW: Product Stock Summary
--- =====================================================
-DROP VIEW IF EXISTS `v_product_stock`;
-CREATE VIEW `v_product_stock` AS
-SELECT 
-    p.id,
-    p.sku,
-    p.name,
-    c.name as category_name,
-    p.price,
-    p.cost,
-    p.stock,
-    p.min_stock,
-    CASE 
-        WHEN p.stock <= p.min_stock THEN 'Low Stock'
-        WHEN p.stock = 0 THEN 'Out of Stock'
-        ELSE 'In Stock'
-    END as stock_status
-FROM products p
-LEFT JOIN categories c ON p.category_id = c.id
-WHERE p.is_active = TRUE;
+-- Dumping structure for table db_mypos.tx_purchase_items
+CREATE TABLE IF NOT EXISTS `tx_purchase_items` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `purchase_id` int(11) DEFAULT NULL,
+  `product_id` int(11) DEFAULT NULL,
+  `product_name` varchar(200) DEFAULT NULL,
+  `quantity` decimal(10,4) NOT NULL,
+  `unit_price` decimal(15,2) NOT NULL,
+  `subtotal` decimal(15,2) NOT NULL,
+  `delete_status` tinyint(1) DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `purchase_id` (`purchase_id`),
+  KEY `product_id` (`product_id`),
+  CONSTRAINT `1` FOREIGN KEY (`purchase_id`) REFERENCES `tx_purchases` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `2` FOREIGN KEY (`product_id`) REFERENCES `m_products` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=261 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- =====================================================
--- VIEW: Sales Summary
--- =====================================================
-DROP VIEW IF EXISTS `v_sales_summary`;
-CREATE VIEW `v_sales_summary` AS
-SELECT 
-    s.id,
-    s.invoice_number,
-    s.sale_date,
-    cu.name as customer_name,
-    u.username as cashier,
-    s.subtotal,
-    s.discount,
-    s.tax,
-    s.total,
-    s.payment_method,
-    s.payment_status
-FROM sales s
-LEFT JOIN customers cu ON s.customer_id = cu.id
-LEFT JOIN users u ON s.user_id = u.id
-ORDER BY s.sale_date DESC;
+-- Dumping data for table db_mypos.tx_purchase_items: ~260 rows (approximately)
+INSERT INTO `tx_purchase_items` (`id`, `purchase_id`, `product_id`, `product_name`, `quantity`, `unit_price`, `subtotal`, `delete_status`) VALUES
+	(1, 1, 7, 'Sabun Lifebuoy', 28.0000, 4500.00, 126000.00, 0),
+	(2, 1, 5, 'Telur Ayam', 45.0000, 2200.00, 99000.00, 0),
+	(3, 1, 4, 'Beras Rojolele 5kg', 42.0000, 14000.00, 588000.00, 0),
+	(4, 1, 10, 'Kopi Kapal Api Mix', 48.0000, 1500.00, 72000.00, 0),
+	(5, 1, 8, 'Minyak Goreng Bimoli 2L', 50.0000, 32000.00, 1600000.00, 0),
+	(6, 2, 8, 'Minyak Goreng Bimoli 2L', 32.0000, 32000.00, 1024000.00, 0),
+	(7, 2, 5, 'Telur Ayam', 33.0000, 2200.00, 72600.00, 0),
+	(8, 3, 2, 'Aqua 600ml', 11.0000, 2500.00, 27500.00, 0),
+	(9, 3, 10, 'Kopi Kapal Api Mix', 39.0000, 1500.00, 58500.00, 0),
+	(10, 3, 5, 'Telur Ayam', 44.0000, 2200.00, 96800.00, 0),
+	(11, 3, 7, 'Sabun Lifebuoy', 49.0000, 4500.00, 220500.00, 0),
+	(12, 3, 1, 'Indomie Goreng', 39.0000, 2800.00, 109200.00, 0),
+	(13, 3, 3, 'Coca Cola 1.5L', 24.0000, 12000.00, 288000.00, 0),
+	(14, 4, 10, 'Kopi Kapal Api Mix', 39.0000, 1500.00, 58500.00, 0),
+	(15, 4, 3, 'Coca Cola 1.5L', 41.0000, 12000.00, 492000.00, 0),
+	(16, 4, 4, 'Beras Rojolele 5kg', 24.0000, 14000.00, 336000.00, 0),
+	(17, 5, 3, 'Coca Cola 1.5L', 27.0000, 12000.00, 324000.00, 0),
+	(18, 5, 5, 'Telur Ayam', 16.0000, 2200.00, 35200.00, 0),
+	(19, 6, 6, 'Rokok Sampoerna Mild', 15.0000, 1200.00, 18000.00, 0),
+	(20, 6, 7, 'Sabun Lifebuoy', 29.0000, 4500.00, 130500.00, 0),
+	(21, 6, 4, 'Beras Rojolele 5kg', 21.0000, 14000.00, 294000.00, 0),
+	(22, 6, 1, 'Indomie Goreng', 45.0000, 2800.00, 126000.00, 0),
+	(23, 6, 8, 'Minyak Goreng Bimoli 2L', 20.0000, 32000.00, 640000.00, 0),
+	(24, 6, 2, 'Aqua 600ml', 20.0000, 2500.00, 50000.00, 0),
+	(25, 7, 8, 'Minyak Goreng Bimoli 2L', 15.0000, 32000.00, 480000.00, 0),
+	(26, 7, 10, 'Kopi Kapal Api Mix', 10.0000, 1500.00, 15000.00, 0),
+	(27, 7, 5, 'Telur Ayam', 10.0000, 2200.00, 22000.00, 0),
+	(28, 7, 3, 'Coca Cola 1.5L', 34.0000, 12000.00, 408000.00, 0),
+	(29, 7, 4, 'Beras Rojolele 5kg', 24.0000, 14000.00, 336000.00, 0),
+	(30, 7, 7, 'Sabun Lifebuoy', 11.0000, 4500.00, 49500.00, 0),
+	(31, 8, 3, 'Coca Cola 1.5L', 28.0000, 12000.00, 336000.00, 0),
+	(32, 8, 4, 'Beras Rojolele 5kg', 40.0000, 14000.00, 560000.00, 0),
+	(33, 8, 1, 'Indomie Goreng', 12.0000, 2800.00, 33600.00, 0),
+	(34, 9, 6, 'Rokok Sampoerna Mild', 15.0000, 1200.00, 18000.00, 0),
+	(35, 9, 5, 'Telur Ayam', 23.0000, 2200.00, 50600.00, 0),
+	(36, 9, 4, 'Beras Rojolele 5kg', 47.0000, 14000.00, 658000.00, 0),
+	(37, 9, 8, 'Minyak Goreng Bimoli 2L', 27.0000, 32000.00, 864000.00, 0),
+	(38, 9, 2, 'Aqua 600ml', 28.0000, 2500.00, 70000.00, 0),
+	(39, 9, 1, 'Indomie Goreng', 41.0000, 2800.00, 114800.00, 0),
+	(40, 10, 2, 'Aqua 600ml', 19.0000, 2500.00, 47500.00, 0),
+	(41, 10, 6, 'Rokok Sampoerna Mild', 47.0000, 1200.00, 56400.00, 0),
+	(42, 10, 4, 'Beras Rojolele 5kg', 44.0000, 14000.00, 616000.00, 0),
+	(43, 11, 6, 'Rokok Sampoerna Mild', 42.0000, 1200.00, 50400.00, 0),
+	(44, 11, 5, 'Telur Ayam', 22.0000, 2200.00, 48400.00, 0),
+	(45, 12, 6, 'Rokok Sampoerna Mild', 49.0000, 1200.00, 58800.00, 0),
+	(46, 12, 10, 'Kopi Kapal Api Mix', 28.0000, 1500.00, 42000.00, 0),
+	(47, 12, 3, 'Coca Cola 1.5L', 10.0000, 12000.00, 120000.00, 0),
+	(48, 12, 8, 'Minyak Goreng Bimoli 2L', 45.0000, 32000.00, 1440000.00, 0),
+	(49, 12, 4, 'Beras Rojolele 5kg', 30.0000, 14000.00, 420000.00, 0),
+	(50, 12, 2, 'Aqua 600ml', 48.0000, 2500.00, 120000.00, 0),
+	(51, 13, 4, 'Beras Rojolele 5kg', 23.0000, 14000.00, 322000.00, 0),
+	(52, 13, 6, 'Rokok Sampoerna Mild', 15.0000, 1200.00, 18000.00, 0),
+	(53, 13, 2, 'Aqua 600ml', 37.0000, 2500.00, 92500.00, 0),
+	(54, 13, 10, 'Kopi Kapal Api Mix', 23.0000, 1500.00, 34500.00, 0),
+	(55, 14, 5, 'Telur Ayam', 50.0000, 2200.00, 110000.00, 0),
+	(56, 14, 4, 'Beras Rojolele 5kg', 20.0000, 14000.00, 280000.00, 0),
+	(57, 14, 2, 'Aqua 600ml', 23.0000, 2500.00, 57500.00, 0),
+	(58, 14, 3, 'Coca Cola 1.5L', 33.0000, 12000.00, 396000.00, 0),
+	(59, 15, 1, 'Indomie Goreng', 16.0000, 2800.00, 44800.00, 0),
+	(60, 15, 3, 'Coca Cola 1.5L', 17.0000, 12000.00, 204000.00, 0),
+	(61, 15, 8, 'Minyak Goreng Bimoli 2L', 44.0000, 32000.00, 1408000.00, 0),
+	(62, 15, 4, 'Beras Rojolele 5kg', 10.0000, 14000.00, 140000.00, 0),
+	(63, 15, 10, 'Kopi Kapal Api Mix', 43.0000, 1500.00, 64500.00, 0),
+	(64, 15, 7, 'Sabun Lifebuoy', 18.0000, 4500.00, 81000.00, 0),
+	(65, 16, 1, 'Indomie Goreng', 14.0000, 2800.00, 39200.00, 0),
+	(66, 16, 6, 'Rokok Sampoerna Mild', 12.0000, 1200.00, 14400.00, 0),
+	(67, 17, 3, 'Coca Cola 1.5L', 48.0000, 12000.00, 576000.00, 0),
+	(68, 17, 10, 'Kopi Kapal Api Mix', 39.0000, 1500.00, 58500.00, 0),
+	(69, 17, 2, 'Aqua 600ml', 10.0000, 2500.00, 25000.00, 0),
+	(70, 17, 4, 'Beras Rojolele 5kg', 36.0000, 14000.00, 504000.00, 0),
+	(71, 18, 2, 'Aqua 600ml', 34.0000, 2500.00, 85000.00, 0),
+	(72, 18, 7, 'Sabun Lifebuoy', 17.0000, 4500.00, 76500.00, 0),
+	(73, 18, 3, 'Coca Cola 1.5L', 44.0000, 12000.00, 528000.00, 0),
+	(74, 18, 5, 'Telur Ayam', 47.0000, 2200.00, 103400.00, 0),
+	(75, 19, 6, 'Rokok Sampoerna Mild', 19.0000, 1200.00, 22800.00, 0),
+	(76, 19, 7, 'Sabun Lifebuoy', 48.0000, 4500.00, 216000.00, 0),
+	(77, 19, 2, 'Aqua 600ml', 17.0000, 2500.00, 42500.00, 0),
+	(78, 20, 10, 'Kopi Kapal Api Mix', 25.0000, 1500.00, 37500.00, 0),
+	(79, 20, 5, 'Telur Ayam', 12.0000, 2200.00, 26400.00, 0),
+	(80, 20, 8, 'Minyak Goreng Bimoli 2L', 37.0000, 32000.00, 1184000.00, 0),
+	(81, 20, 7, 'Sabun Lifebuoy', 39.0000, 4500.00, 175500.00, 0),
+	(82, 20, 6, 'Rokok Sampoerna Mild', 26.0000, 1200.00, 31200.00, 0),
+	(83, 21, 8, 'Minyak Goreng Bimoli 2L', 26.0000, 32000.00, 832000.00, 0),
+	(84, 21, 10, 'Kopi Kapal Api Mix', 26.0000, 1500.00, 39000.00, 0),
+	(85, 21, 5, 'Telur Ayam', 13.0000, 2200.00, 28600.00, 0),
+	(86, 21, 3, 'Coca Cola 1.5L', 50.0000, 12000.00, 600000.00, 0),
+	(87, 21, 1, 'Indomie Goreng', 11.0000, 2800.00, 30800.00, 0),
+	(88, 21, 7, 'Sabun Lifebuoy', 27.0000, 4500.00, 121500.00, 0),
+	(89, 22, 7, 'Sabun Lifebuoy', 32.0000, 4500.00, 144000.00, 0),
+	(90, 22, 1, 'Indomie Goreng', 50.0000, 2800.00, 140000.00, 0),
+	(91, 22, 4, 'Beras Rojolele 5kg', 39.0000, 14000.00, 546000.00, 0),
+	(92, 22, 6, 'Rokok Sampoerna Mild', 21.0000, 1200.00, 25200.00, 0),
+	(93, 22, 5, 'Telur Ayam', 21.0000, 2200.00, 46200.00, 0),
+	(94, 22, 10, 'Kopi Kapal Api Mix', 32.0000, 1500.00, 48000.00, 0),
+	(95, 23, 3, 'Coca Cola 1.5L', 13.0000, 12000.00, 156000.00, 0),
+	(96, 23, 6, 'Rokok Sampoerna Mild', 39.0000, 1200.00, 46800.00, 0),
+	(97, 23, 5, 'Telur Ayam', 32.0000, 2200.00, 70400.00, 0),
+	(98, 23, 1, 'Indomie Goreng', 40.0000, 2800.00, 112000.00, 0),
+	(99, 24, 5, 'Telur Ayam', 40.0000, 2200.00, 88000.00, 0),
+	(100, 24, 10, 'Kopi Kapal Api Mix', 18.0000, 1500.00, 27000.00, 0),
+	(101, 24, 3, 'Coca Cola 1.5L', 25.0000, 12000.00, 300000.00, 0),
+	(102, 25, 7, 'Sabun Lifebuoy', 24.0000, 4500.00, 108000.00, 0),
+	(103, 25, 6, 'Rokok Sampoerna Mild', 49.0000, 1200.00, 58800.00, 0),
+	(104, 25, 10, 'Kopi Kapal Api Mix', 50.0000, 1500.00, 75000.00, 0),
+	(105, 26, 4, 'Beras Rojolele 5kg', 31.0000, 14000.00, 434000.00, 0),
+	(106, 26, 3, 'Coca Cola 1.5L', 17.0000, 12000.00, 204000.00, 0),
+	(107, 27, 1, 'Indomie Goreng', 14.0000, 2800.00, 39200.00, 0),
+	(108, 27, 4, 'Beras Rojolele 5kg', 24.0000, 14000.00, 336000.00, 0),
+	(109, 27, 5, 'Telur Ayam', 20.0000, 2200.00, 44000.00, 0),
+	(110, 28, 7, 'Sabun Lifebuoy', 40.0000, 4500.00, 180000.00, 0),
+	(111, 28, 4, 'Beras Rojolele 5kg', 14.0000, 14000.00, 196000.00, 0),
+	(112, 29, 1, 'Indomie Goreng', 40.0000, 2800.00, 112000.00, 0),
+	(113, 29, 4, 'Beras Rojolele 5kg', 10.0000, 14000.00, 140000.00, 0),
+	(114, 29, 2, 'Aqua 600ml', 27.0000, 2500.00, 67500.00, 0),
+	(115, 30, 3, 'Coca Cola 1.5L', 24.0000, 12000.00, 288000.00, 0),
+	(116, 30, 2, 'Aqua 600ml', 14.0000, 2500.00, 35000.00, 0),
+	(117, 30, 5, 'Telur Ayam', 42.0000, 2200.00, 92400.00, 0),
+	(118, 31, 6, 'Rokok Sampoerna Mild', 41.0000, 1200.00, 49200.00, 0),
+	(119, 31, 1, 'Indomie Goreng', 46.0000, 2800.00, 128800.00, 0),
+	(120, 31, 5, 'Telur Ayam', 48.0000, 2200.00, 105600.00, 0),
+	(121, 31, 7, 'Sabun Lifebuoy', 40.0000, 4500.00, 180000.00, 0),
+	(122, 31, 4, 'Beras Rojolele 5kg', 33.0000, 14000.00, 462000.00, 0),
+	(123, 32, 1, 'Indomie Goreng', 49.0000, 2800.00, 137200.00, 0),
+	(124, 32, 6, 'Rokok Sampoerna Mild', 27.0000, 1200.00, 32400.00, 0),
+	(125, 33, 3, 'Coca Cola 1.5L', 41.0000, 12000.00, 492000.00, 0),
+	(126, 33, 4, 'Beras Rojolele 5kg', 45.0000, 14000.00, 630000.00, 0),
+	(127, 33, 6, 'Rokok Sampoerna Mild', 24.0000, 1200.00, 28800.00, 0),
+	(128, 33, 10, 'Kopi Kapal Api Mix', 27.0000, 1500.00, 40500.00, 0),
+	(129, 34, 2, 'Aqua 600ml', 40.0000, 2500.00, 100000.00, 0),
+	(130, 34, 7, 'Sabun Lifebuoy', 48.0000, 4500.00, 216000.00, 0),
+	(131, 34, 4, 'Beras Rojolele 5kg', 28.0000, 14000.00, 392000.00, 0),
+	(132, 34, 5, 'Telur Ayam', 44.0000, 2200.00, 96800.00, 0),
+	(133, 34, 6, 'Rokok Sampoerna Mild', 42.0000, 1200.00, 50400.00, 0),
+	(134, 34, 8, 'Minyak Goreng Bimoli 2L', 50.0000, 32000.00, 1600000.00, 0),
+	(135, 35, 8, 'Minyak Goreng Bimoli 2L', 27.0000, 32000.00, 864000.00, 0),
+	(136, 35, 6, 'Rokok Sampoerna Mild', 44.0000, 1200.00, 52800.00, 0),
+	(137, 35, 5, 'Telur Ayam', 25.0000, 2200.00, 55000.00, 0),
+	(138, 36, 6, 'Rokok Sampoerna Mild', 29.0000, 1200.00, 34800.00, 0),
+	(139, 36, 5, 'Telur Ayam', 30.0000, 2200.00, 66000.00, 0),
+	(140, 36, 2, 'Aqua 600ml', 45.0000, 2500.00, 112500.00, 0),
+	(141, 37, 8, 'Minyak Goreng Bimoli 2L', 17.0000, 32000.00, 544000.00, 0),
+	(142, 37, 2, 'Aqua 600ml', 35.0000, 2500.00, 87500.00, 0),
+	(143, 37, 3, 'Coca Cola 1.5L', 33.0000, 12000.00, 396000.00, 0),
+	(144, 37, 6, 'Rokok Sampoerna Mild', 22.0000, 1200.00, 26400.00, 0),
+	(145, 38, 2, 'Aqua 600ml', 35.0000, 2500.00, 87500.00, 0),
+	(146, 38, 8, 'Minyak Goreng Bimoli 2L', 15.0000, 32000.00, 480000.00, 0),
+	(147, 38, 4, 'Beras Rojolele 5kg', 28.0000, 14000.00, 392000.00, 0),
+	(148, 39, 4, 'Beras Rojolele 5kg', 50.0000, 14000.00, 700000.00, 0),
+	(149, 39, 7, 'Sabun Lifebuoy', 27.0000, 4500.00, 121500.00, 0),
+	(150, 39, 10, 'Kopi Kapal Api Mix', 19.0000, 1500.00, 28500.00, 0),
+	(151, 39, 8, 'Minyak Goreng Bimoli 2L', 13.0000, 32000.00, 416000.00, 0),
+	(152, 40, 8, 'Minyak Goreng Bimoli 2L', 11.0000, 32000.00, 352000.00, 0),
+	(153, 40, 6, 'Rokok Sampoerna Mild', 11.0000, 1200.00, 13200.00, 0),
+	(154, 41, 5, 'Telur Ayam', 41.0000, 2200.00, 90200.00, 0),
+	(155, 41, 4, 'Beras Rojolele 5kg', 28.0000, 14000.00, 392000.00, 0),
+	(156, 42, 4, 'Beras Rojolele 5kg', 22.0000, 14000.00, 308000.00, 0),
+	(157, 42, 7, 'Sabun Lifebuoy', 17.0000, 4500.00, 76500.00, 0),
+	(158, 42, 6, 'Rokok Sampoerna Mild', 32.0000, 1200.00, 38400.00, 0),
+	(159, 42, 2, 'Aqua 600ml', 22.0000, 2500.00, 55000.00, 0),
+	(160, 42, 3, 'Coca Cola 1.5L', 27.0000, 12000.00, 324000.00, 0),
+	(161, 42, 10, 'Kopi Kapal Api Mix', 26.0000, 1500.00, 39000.00, 0),
+	(162, 43, 3, 'Coca Cola 1.5L', 38.0000, 12000.00, 456000.00, 0),
+	(163, 43, 10, 'Kopi Kapal Api Mix', 21.0000, 1500.00, 31500.00, 0),
+	(164, 43, 7, 'Sabun Lifebuoy', 46.0000, 4500.00, 207000.00, 0),
+	(165, 43, 6, 'Rokok Sampoerna Mild', 35.0000, 1200.00, 42000.00, 0),
+	(166, 44, 7, 'Sabun Lifebuoy', 45.0000, 4500.00, 202500.00, 0),
+	(167, 44, 10, 'Kopi Kapal Api Mix', 28.0000, 1500.00, 42000.00, 0),
+	(168, 44, 4, 'Beras Rojolele 5kg', 48.0000, 14000.00, 672000.00, 0),
+	(169, 45, 2, 'Aqua 600ml', 42.0000, 2500.00, 105000.00, 0),
+	(170, 45, 4, 'Beras Rojolele 5kg', 25.0000, 14000.00, 350000.00, 0),
+	(171, 45, 5, 'Telur Ayam', 20.0000, 2200.00, 44000.00, 0),
+	(172, 45, 6, 'Rokok Sampoerna Mild', 20.0000, 1200.00, 24000.00, 0),
+	(173, 46, 8, 'Minyak Goreng Bimoli 2L', 41.0000, 32000.00, 1312000.00, 0),
+	(174, 46, 7, 'Sabun Lifebuoy', 47.0000, 4500.00, 211500.00, 0),
+	(175, 46, 3, 'Coca Cola 1.5L', 24.0000, 12000.00, 288000.00, 0),
+	(176, 46, 1, 'Indomie Goreng', 20.0000, 2800.00, 56000.00, 0),
+	(177, 47, 3, 'Coca Cola 1.5L', 23.0000, 12000.00, 276000.00, 0),
+	(178, 47, 4, 'Beras Rojolele 5kg', 23.0000, 14000.00, 322000.00, 0),
+	(179, 47, 5, 'Telur Ayam', 45.0000, 2200.00, 99000.00, 0),
+	(180, 47, 10, 'Kopi Kapal Api Mix', 30.0000, 1500.00, 45000.00, 0),
+	(181, 47, 6, 'Rokok Sampoerna Mild', 41.0000, 1200.00, 49200.00, 0),
+	(182, 48, 1, 'Indomie Goreng', 35.0000, 2800.00, 98000.00, 0),
+	(183, 48, 4, 'Beras Rojolele 5kg', 20.0000, 14000.00, 280000.00, 0),
+	(184, 49, 4, 'Beras Rojolele 5kg', 42.0000, 14000.00, 588000.00, 0),
+	(185, 49, 10, 'Kopi Kapal Api Mix', 35.0000, 1500.00, 52500.00, 0),
+	(186, 49, 2, 'Aqua 600ml', 29.0000, 2500.00, 72500.00, 0),
+	(187, 49, 6, 'Rokok Sampoerna Mild', 41.0000, 1200.00, 49200.00, 0),
+	(188, 49, 3, 'Coca Cola 1.5L', 24.0000, 12000.00, 288000.00, 0),
+	(189, 50, 6, 'Rokok Sampoerna Mild', 40.0000, 1200.00, 48000.00, 0),
+	(190, 50, 3, 'Coca Cola 1.5L', 35.0000, 12000.00, 420000.00, 0),
+	(191, 50, 10, 'Kopi Kapal Api Mix', 40.0000, 1500.00, 60000.00, 0),
+	(192, 50, 4, 'Beras Rojolele 5kg', 28.0000, 14000.00, 392000.00, 0),
+	(193, 50, 5, 'Telur Ayam', 19.0000, 2200.00, 41800.00, 0),
+	(194, 50, 7, 'Sabun Lifebuoy', 23.0000, 4500.00, 103500.00, 0),
+	(195, 51, 7, 'Sabun Lifebuoy', 13.0000, 4500.00, 58500.00, 0),
+	(196, 51, 5, 'Telur Ayam', 37.0000, 2200.00, 81400.00, 0),
+	(197, 51, 1, 'Indomie Goreng', 46.0000, 2800.00, 128800.00, 0),
+	(198, 51, 10, 'Kopi Kapal Api Mix', 42.0000, 1500.00, 63000.00, 0),
+	(199, 51, 4, 'Beras Rojolele 5kg', 20.0000, 14000.00, 280000.00, 0),
+	(200, 51, 3, 'Coca Cola 1.5L', 40.0000, 12000.00, 480000.00, 0),
+	(201, 52, 4, 'Beras Rojolele 5kg', 38.0000, 14000.00, 532000.00, 0),
+	(202, 52, 5, 'Telur Ayam', 47.0000, 2200.00, 103400.00, 0),
+	(203, 52, 6, 'Rokok Sampoerna Mild', 26.0000, 1200.00, 31200.00, 0),
+	(204, 52, 2, 'Aqua 600ml', 44.0000, 2500.00, 110000.00, 0),
+	(205, 52, 10, 'Kopi Kapal Api Mix', 49.0000, 1500.00, 73500.00, 0),
+	(206, 53, 6, 'Rokok Sampoerna Mild', 28.0000, 1200.00, 33600.00, 0),
+	(207, 53, 4, 'Beras Rojolele 5kg', 23.0000, 14000.00, 322000.00, 0),
+	(208, 53, 5, 'Telur Ayam', 18.0000, 2200.00, 39600.00, 0),
+	(209, 53, 7, 'Sabun Lifebuoy', 39.0000, 4500.00, 175500.00, 0),
+	(210, 53, 3, 'Coca Cola 1.5L', 25.0000, 12000.00, 300000.00, 0),
+	(211, 54, 5, 'Telur Ayam', 42.0000, 2200.00, 92400.00, 0),
+	(212, 54, 8, 'Minyak Goreng Bimoli 2L', 37.0000, 32000.00, 1184000.00, 0),
+	(213, 54, 4, 'Beras Rojolele 5kg', 39.0000, 14000.00, 546000.00, 0),
+	(214, 54, 2, 'Aqua 600ml', 10.0000, 2500.00, 25000.00, 0),
+	(215, 54, 1, 'Indomie Goreng', 11.0000, 2800.00, 30800.00, 0),
+	(216, 54, 7, 'Sabun Lifebuoy', 41.0000, 4500.00, 184500.00, 0),
+	(217, 55, 2, 'Aqua 600ml', 38.0000, 2500.00, 95000.00, 0),
+	(218, 55, 4, 'Beras Rojolele 5kg', 30.0000, 14000.00, 420000.00, 0),
+	(219, 55, 6, 'Rokok Sampoerna Mild', 15.0000, 1200.00, 18000.00, 0),
+	(220, 56, 6, 'Rokok Sampoerna Mild', 31.0000, 1200.00, 37200.00, 0),
+	(221, 56, 7, 'Sabun Lifebuoy', 11.0000, 4500.00, 49500.00, 0),
+	(222, 56, 1, 'Indomie Goreng', 32.0000, 2800.00, 89600.00, 0),
+	(223, 56, 8, 'Minyak Goreng Bimoli 2L', 37.0000, 32000.00, 1184000.00, 0),
+	(224, 57, 1, 'Indomie Goreng', 14.0000, 2800.00, 39200.00, 0),
+	(225, 57, 5, 'Telur Ayam', 14.0000, 2200.00, 30800.00, 0),
+	(226, 57, 7, 'Sabun Lifebuoy', 44.0000, 4500.00, 198000.00, 0),
+	(227, 58, 8, 'Minyak Goreng Bimoli 2L', 50.0000, 32000.00, 1600000.00, 0),
+	(228, 58, 2, 'Aqua 600ml', 37.0000, 2500.00, 92500.00, 0),
+	(229, 58, 3, 'Coca Cola 1.5L', 26.0000, 12000.00, 312000.00, 0),
+	(230, 58, 6, 'Rokok Sampoerna Mild', 39.0000, 1200.00, 46800.00, 0),
+	(231, 58, 7, 'Sabun Lifebuoy', 24.0000, 4500.00, 108000.00, 0),
+	(232, 58, 4, 'Beras Rojolele 5kg', 24.0000, 14000.00, 336000.00, 0),
+	(233, 59, 4, 'Beras Rojolele 5kg', 21.0000, 14000.00, 294000.00, 0),
+	(234, 59, 5, 'Telur Ayam', 20.0000, 2200.00, 44000.00, 0),
+	(235, 60, 8, 'Minyak Goreng Bimoli 2L', 47.0000, 32000.00, 1504000.00, 0),
+	(236, 60, 3, 'Coca Cola 1.5L', 18.0000, 12000.00, 216000.00, 0),
+	(237, 60, 2, 'Aqua 600ml', 26.0000, 2500.00, 65000.00, 0),
+	(238, 60, 6, 'Rokok Sampoerna Mild', 39.0000, 1200.00, 46800.00, 0),
+	(239, 60, 5, 'Telur Ayam', 23.0000, 2200.00, 50600.00, 0),
+	(240, 61, 2, 'Aqua 600ml', 30.0000, 2500.00, 75000.00, 0),
+	(241, 61, 7, 'Sabun Lifebuoy', 25.0000, 4500.00, 112500.00, 0),
+	(242, 62, 7, 'Sabun Lifebuoy', 26.0000, 4500.00, 117000.00, 0),
+	(243, 62, 2, 'Aqua 600ml', 11.0000, 2500.00, 27500.00, 0),
+	(244, 62, 3, 'Coca Cola 1.5L', 49.0000, 12000.00, 588000.00, 0),
+	(245, 62, 8, 'Minyak Goreng Bimoli 2L', 48.0000, 32000.00, 1536000.00, 0),
+	(246, 63, 8, 'Minyak Goreng Bimoli 2L', 23.0000, 32000.00, 736000.00, 0),
+	(247, 63, 3, 'Coca Cola 1.5L', 13.0000, 12000.00, 156000.00, 0),
+	(248, 63, 10, 'Kopi Kapal Api Mix', 42.0000, 1500.00, 63000.00, 0),
+	(249, 63, 7, 'Sabun Lifebuoy', 41.0000, 4500.00, 184500.00, 0),
+	(250, 63, 2, 'Aqua 600ml', 23.0000, 2500.00, 57500.00, 0),
+	(251, 63, 1, 'Indomie Goreng', 25.0000, 2800.00, 70000.00, 0),
+	(252, 64, 6, 'Rokok Sampoerna Mild', 23.0000, 1200.00, 27600.00, 0),
+	(253, 64, 8, 'Minyak Goreng Bimoli 2L', 25.0000, 32000.00, 800000.00, 0),
+	(254, 64, 1, 'Indomie Goreng', 18.0000, 2800.00, 50400.00, 0),
+	(255, 64, 4, 'Beras Rojolele 5kg', 30.0000, 14000.00, 420000.00, 0),
+	(256, 64, 10, 'Kopi Kapal Api Mix', 16.0000, 1500.00, 24000.00, 0),
+	(257, 65, 8, 'Minyak Goreng Bimoli 2L', 20.0000, 32000.00, 640000.00, 0),
+	(258, 65, 1, 'Indomie Goreng', 30.0000, 2800.00, 84000.00, 0),
+	(259, 65, 10, 'Kopi Kapal Api Mix', 36.0000, 1500.00, 54000.00, 0),
+	(260, 65, 3, 'Coca Cola 1.5L', 48.0000, 12000.00, 576000.00, 0);
 
--- =====================================================
--- TRIGGER: Update Stock After Sale
--- =====================================================
-DROP TRIGGER IF EXISTS `trg_update_stock_after_sale`;
-DELIMITER //
-CREATE TRIGGER `trg_update_stock_after_sale`
-AFTER INSERT ON `sale_items`
-FOR EACH ROW
-BEGIN
-    UPDATE `products`
-    SET `stock` = `stock` - NEW.quantity
-    WHERE `id` = NEW.product_id;
-END//
-DELIMITER ;
+-- Dumping structure for table db_mypos.tx_purchases
+CREATE TABLE IF NOT EXISTS `tx_purchases` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `invoice_number` varchar(50) DEFAULT NULL,
+  `purchase_date` datetime DEFAULT current_timestamp(),
+  `user_id` int(11) DEFAULT NULL,
+  `vendor_id` int(11) DEFAULT NULL,
+  `subtotal` decimal(15,2) DEFAULT 0.00,
+  `tax_amount` decimal(15,2) DEFAULT 0.00,
+  `discount_amount` decimal(15,2) DEFAULT 0.00,
+  `total_amount` decimal(15,2) NOT NULL,
+  `status` varchar(20) DEFAULT 'completed',
+  `delete_status` tinyint(1) DEFAULT 0,
+  `created_date` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `vendor_id` (`vendor_id`),
+  CONSTRAINT `1` FOREIGN KEY (`user_id`) REFERENCES `m_users` (`id`),
+  CONSTRAINT `2` FOREIGN KEY (`vendor_id`) REFERENCES `m_vendors` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- =====================================================
--- TRIGGER: Update Stock After Purchase Order Received
--- =====================================================
-DROP TRIGGER IF EXISTS `trg_update_stock_after_po`;
-DELIMITER //
-CREATE TRIGGER `trg_update_stock_after_po`
-AFTER UPDATE ON `purchase_order_items`
-FOR EACH ROW
-BEGIN
-    IF NEW.received_quantity > OLD.received_quantity THEN
-        UPDATE `products`
-        SET `stock` = `stock` + (NEW.received_quantity - OLD.received_quantity)
-        WHERE `id` = NEW.product_id;
-    END IF;
-END//
-DELIMITER ;
+-- Dumping data for table db_mypos.tx_purchases: ~65 rows (approximately)
+INSERT INTO `tx_purchases` (`id`, `invoice_number`, `purchase_date`, `user_id`, `vendor_id`, `subtotal`, `tax_amount`, `discount_amount`, `total_amount`, `status`, `delete_status`, `created_date`) VALUES
+	(1, 'PI/20260106/9341', '2026-01-06 23:08:33', 1, 1, 2485000.00, 0.00, 0.00, 2485000.00, 'completed', 0, '2026-01-11 00:08:34'),
+	(2, 'PI/20260106/4626', '2026-01-06 08:08:33', 2, 1, 1096600.00, 0.00, 0.00, 1096600.00, 'completed', 0, '2026-01-11 00:08:34'),
+	(3, 'PI/20260110/4402', '2026-01-10 17:08:33', 1, 4, 800500.00, 0.00, 0.00, 800500.00, 'completed', 0, '2026-01-11 00:08:35'),
+	(4, 'PI/20260106/2711', '2026-01-06 16:08:33', 3, 4, 886500.00, 0.00, 0.00, 886500.00, 'completed', 0, '2026-01-11 00:08:35'),
+	(5, 'PI/20260105/9622', '2026-01-05 11:08:33', 2, 1, 359200.00, 0.00, 0.00, 359200.00, 'completed', 0, '2026-01-11 00:08:36'),
+	(6, 'PI/20260105/9695', '2026-01-05 21:08:33', 4, 2, 1258500.00, 0.00, 0.00, 1258500.00, 'completed', 0, '2026-01-11 00:08:37'),
+	(7, 'PI/20260107/4110', '2026-01-07 00:08:33', 2, 4, 1310500.00, 0.00, 0.00, 1310500.00, 'completed', 0, '2026-01-11 00:08:37'),
+	(8, 'PI/20260109/1145', '2026-01-09 17:08:33', 2, 3, 929600.00, 0.00, 0.00, 929600.00, 'completed', 0, '2026-01-11 00:08:38'),
+	(9, 'PI/20260110/5384', '2026-01-10 13:08:33', 1, 2, 1775400.00, 0.00, 0.00, 1775400.00, 'completed', 0, '2026-01-11 00:08:39'),
+	(10, 'PI/20260110/4420', '2026-01-10 15:08:33', 2, 5, 719900.00, 0.00, 0.00, 719900.00, 'completed', 0, '2026-01-11 00:08:39'),
+	(11, 'PI/20251218/4668', '2025-12-18 09:08:33', 3, 2, 98800.00, 0.00, 0.00, 98800.00, 'completed', 0, '2026-01-11 00:08:40'),
+	(12, 'PI/20251217/4440', '2025-12-17 00:08:33', 4, 5, 2200800.00, 0.00, 0.00, 2200800.00, 'completed', 0, '2026-01-11 00:08:40'),
+	(13, 'PI/20251216/3009', '2025-12-16 14:08:33', 3, 4, 467000.00, 0.00, 0.00, 467000.00, 'completed', 0, '2026-01-11 00:08:41'),
+	(14, 'PI/20251217/7115', '2025-12-17 07:08:33', 4, 5, 843500.00, 0.00, 0.00, 843500.00, 'completed', 0, '2026-01-11 00:08:42'),
+	(15, 'PI/20251221/2036', '2025-12-21 08:08:33', 3, 3, 1942300.00, 0.00, 0.00, 1942300.00, 'completed', 0, '2026-01-11 00:08:43'),
+	(16, 'PI/20251219/8799', '2025-12-19 07:08:33', 2, 1, 53600.00, 0.00, 0.00, 53600.00, 'completed', 0, '2026-01-11 00:08:44'),
+	(17, 'PI/20251221/5175', '2025-12-21 16:08:33', 4, 5, 1163500.00, 0.00, 0.00, 1163500.00, 'completed', 0, '2026-01-11 00:08:44'),
+	(18, 'PI/20251216/1938', '2025-12-16 09:08:33', 4, 3, 792900.00, 0.00, 0.00, 792900.00, 'completed', 0, '2026-01-11 00:08:45'),
+	(19, 'PI/20251217/6126', '2025-12-17 17:08:33', 1, 3, 281300.00, 0.00, 0.00, 281300.00, 'completed', 0, '2026-01-11 00:08:46'),
+	(20, 'PI/20251220/2095', '2025-12-20 07:08:33', 1, 5, 1454600.00, 0.00, 0.00, 1454600.00, 'completed', 0, '2026-01-11 00:08:46'),
+	(21, 'PI/20251130/8395', '2025-11-30 03:08:33', 4, 4, 1651900.00, 0.00, 0.00, 1651900.00, 'completed', 0, '2026-01-11 00:08:47'),
+	(22, 'PI/20251126/1872', '2025-11-26 17:08:33', 4, 1, 949400.00, 0.00, 0.00, 949400.00, 'completed', 0, '2026-01-11 00:08:48'),
+	(23, 'PI/20251127/4941', '2025-11-27 08:08:33', 2, 2, 385200.00, 0.00, 0.00, 385200.00, 'completed', 0, '2026-01-11 00:08:49'),
+	(24, 'PI/20251130/7082', '2025-11-30 08:08:33', 3, 1, 415000.00, 0.00, 0.00, 415000.00, 'completed', 0, '2026-01-11 00:08:50'),
+	(25, 'PI/20251130/5226', '2025-11-30 11:08:33', 4, 2, 241800.00, 0.00, 0.00, 241800.00, 'completed', 0, '2026-01-11 00:08:50'),
+	(26, 'PI/20251127/9986', '2025-11-27 15:08:33', 1, 5, 638000.00, 0.00, 0.00, 638000.00, 'completed', 0, '2026-01-11 00:08:51'),
+	(27, 'PI/20251130/7274', '2025-11-30 02:08:33', 1, 3, 419200.00, 0.00, 0.00, 419200.00, 'completed', 0, '2026-01-11 00:08:52'),
+	(28, 'PI/20251128/8985', '2025-11-28 22:08:33', 2, 2, 376000.00, 0.00, 0.00, 376000.00, 'completed', 0, '2026-01-11 00:08:52'),
+	(29, 'PI/20251201/5294', '2025-12-01 23:08:33', 2, 2, 319500.00, 0.00, 0.00, 319500.00, 'completed', 0, '2026-01-11 00:08:53'),
+	(30, 'PI/20251130/3657', '2025-11-30 05:08:33', 2, 2, 415400.00, 0.00, 0.00, 415400.00, 'completed', 0, '2026-01-11 00:08:53'),
+	(31, 'PI/20251201/6548', '2025-12-01 23:08:33', 3, 4, 925600.00, 0.00, 0.00, 925600.00, 'completed', 0, '2026-01-11 00:08:54'),
+	(32, 'PI/20251128/8092', '2025-11-28 17:08:33', 4, 5, 169600.00, 0.00, 0.00, 169600.00, 'completed', 0, '2026-01-11 00:08:55'),
+	(33, 'PI/20251126/8223', '2025-11-26 09:08:33', 2, 4, 1191300.00, 0.00, 0.00, 1191300.00, 'completed', 0, '2026-01-11 00:08:55'),
+	(34, 'PI/20251126/5421', '2025-11-26 12:08:33', 3, 1, 2455200.00, 0.00, 0.00, 2455200.00, 'completed', 0, '2026-01-11 00:08:56'),
+	(35, 'PI/20251126/3709', '2025-11-26 22:08:33', 2, 5, 971800.00, 0.00, 0.00, 971800.00, 'completed', 0, '2026-01-11 00:08:57'),
+	(36, 'PI/20250620/4911', '2025-06-20 09:08:33', 1, 1, 213300.00, 0.00, 0.00, 213300.00, 'completed', 0, '2026-01-11 00:08:57'),
+	(37, 'PI/20250624/7083', '2025-06-24 23:08:33', 3, 3, 1053900.00, 0.00, 0.00, 1053900.00, 'completed', 0, '2026-01-11 00:08:58'),
+	(38, 'PI/20250619/9082', '2025-06-19 08:08:33', 1, 2, 959500.00, 0.00, 0.00, 959500.00, 'completed', 0, '2026-01-11 00:08:58'),
+	(39, 'PI/20250621/6226', '2025-06-21 07:08:33', 1, 3, 1266000.00, 0.00, 0.00, 1266000.00, 'completed', 0, '2026-01-11 00:08:59'),
+	(40, 'PI/20250623/9443', '2025-06-23 21:08:33', 2, 3, 365200.00, 0.00, 0.00, 365200.00, 'completed', 0, '2026-01-11 00:09:00'),
+	(41, 'PI/20250620/5629', '2025-06-20 19:08:33', 3, 4, 482200.00, 0.00, 0.00, 482200.00, 'completed', 0, '2026-01-11 00:09:00'),
+	(42, 'PI/20250621/2709', '2025-06-21 12:08:33', 1, 2, 840900.00, 0.00, 0.00, 840900.00, 'completed', 0, '2026-01-11 00:09:01'),
+	(43, 'PI/20250624/5844', '2025-06-24 22:08:33', 2, 4, 736500.00, 0.00, 0.00, 736500.00, 'completed', 0, '2026-01-11 00:09:02'),
+	(44, 'PI/20250623/1002', '2025-06-23 21:08:33', 2, 4, 916500.00, 0.00, 0.00, 916500.00, 'completed', 0, '2026-01-11 00:09:03'),
+	(45, 'PI/20250622/4423', '2025-06-22 07:08:33', 2, 4, 523000.00, 0.00, 0.00, 523000.00, 'completed', 0, '2026-01-11 00:09:03'),
+	(46, 'PI/20250619/3846', '2025-06-19 02:08:33', 2, 5, 1867500.00, 0.00, 0.00, 1867500.00, 'completed', 0, '2026-01-11 00:09:04'),
+	(47, 'PI/20250620/3058', '2025-06-20 02:08:33', 1, 1, 791200.00, 0.00, 0.00, 791200.00, 'completed', 0, '2026-01-11 00:09:04'),
+	(48, 'PI/20250624/4634', '2025-06-24 07:08:33', 3, 1, 378000.00, 0.00, 0.00, 378000.00, 'completed', 0, '2026-01-11 00:09:05'),
+	(49, 'PI/20250619/9677', '2025-06-19 07:08:33', 3, 3, 1050200.00, 0.00, 0.00, 1050200.00, 'completed', 0, '2026-01-11 00:09:05'),
+	(50, 'PI/20250619/2726', '2025-06-19 21:08:33', 1, 1, 1065300.00, 0.00, 0.00, 1065300.00, 'completed', 0, '2026-01-11 00:09:06'),
+	(51, 'PI/20250623/9959', '2025-06-23 02:08:33', 1, 3, 1091700.00, 0.00, 0.00, 1091700.00, 'completed', 0, '2026-01-11 00:09:07'),
+	(52, 'PI/20250622/2894', '2025-06-22 01:08:33', 2, 2, 850100.00, 0.00, 0.00, 850100.00, 'completed', 0, '2026-01-11 00:09:08'),
+	(53, 'PI/20250620/9551', '2025-06-20 05:08:33', 1, 4, 870700.00, 0.00, 0.00, 870700.00, 'completed', 0, '2026-01-11 00:09:08'),
+	(54, 'PI/20250625/3441', '2025-06-25 00:08:33', 1, 3, 2062700.00, 0.00, 0.00, 2062700.00, 'completed', 0, '2026-01-11 00:09:09'),
+	(55, 'PI/20250623/9605', '2025-06-23 06:08:33', 2, 4, 533000.00, 0.00, 0.00, 533000.00, 'completed', 0, '2026-01-11 00:09:10'),
+	(56, 'PI/20241202/2691', '2024-12-02 18:08:33', 2, 1, 1360300.00, 0.00, 0.00, 1360300.00, 'completed', 0, '2026-01-11 00:09:11'),
+	(57, 'PI/20241203/7204', '2024-12-03 15:08:33', 2, 3, 268000.00, 0.00, 0.00, 268000.00, 'completed', 0, '2026-01-11 00:09:11'),
+	(58, 'PI/20241205/9479', '2024-12-05 09:08:33', 4, 4, 2495300.00, 0.00, 0.00, 2495300.00, 'completed', 0, '2026-01-11 00:09:12'),
+	(59, 'PI/20241205/2898', '2024-12-05 21:08:33', 3, 5, 338000.00, 0.00, 0.00, 338000.00, 'completed', 0, '2026-01-11 00:09:12'),
+	(60, 'PI/20241205/3687', '2024-12-05 05:08:33', 4, 3, 1882400.00, 0.00, 0.00, 1882400.00, 'completed', 0, '2026-01-11 00:09:13'),
+	(61, 'PI/20241201/1642', '2024-12-01 19:08:33', 1, 1, 187500.00, 0.00, 0.00, 187500.00, 'completed', 0, '2026-01-11 00:09:14'),
+	(62, 'PI/20241206/5339', '2024-12-06 16:08:33', 1, 1, 2268500.00, 0.00, 0.00, 2268500.00, 'completed', 0, '2026-01-11 00:09:14'),
+	(63, 'PI/20241201/7437', '2024-12-01 16:08:33', 2, 1, 1267000.00, 0.00, 0.00, 1267000.00, 'completed', 0, '2026-01-11 00:09:15'),
+	(64, 'PI/20241206/7966', '2024-12-06 16:08:33', 1, 1, 1322000.00, 0.00, 0.00, 1322000.00, 'completed', 0, '2026-01-11 00:09:16'),
+	(65, 'PI/20241202/1296', '2024-12-02 06:08:33', 3, 4, 1354000.00, 0.00, 0.00, 1354000.00, 'completed', 0, '2026-01-11 00:09:17');
 
--- =====================================================
--- SEED DATA: Sample Sales (Optional)
--- =====================================================
--- Uncomment jika ingin menambahkan data penjualan contoh
-/*
-INSERT INTO `sales` (`invoice_number`, `customer_id`, `user_id`, `subtotal`, `discount`, `tax`, `total`, `payment_method`, `amount_paid`, `change_amount`) VALUES
-('INV-20250101-001', 1, 2, 25000, 0, 0, 25000, 'cash', 30000, 5000),
-('INV-20250101-002', 2, 2, 95000, 5000, 0, 90000, 'qris', 90000, 0);
+-- Dumping structure for table db_mypos.tx_transaction_items
+CREATE TABLE IF NOT EXISTS `tx_transaction_items` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `transaction_id` int(11) DEFAULT NULL,
+  `product_id` int(11) DEFAULT NULL,
+  `qty` decimal(10,4) NOT NULL,
+  `unit_name` varchar(50) DEFAULT NULL,
+  `price_at_sale` decimal(15,2) NOT NULL,
+  `subtotal` decimal(15,2) NOT NULL,
+  `delete_status` tinyint(1) DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `transaction_id` (`transaction_id`),
+  KEY `product_id` (`product_id`),
+  CONSTRAINT `1` FOREIGN KEY (`transaction_id`) REFERENCES `tx_transactions` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `2` FOREIGN KEY (`product_id`) REFERENCES `m_products` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=161 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
-INSERT INTO `sale_items` (`sale_id`, `product_id`, `quantity`, `unit_price`, `subtotal`) VALUES
-(1, 1, 1, 15000, 15000),
-(1, 3, 2, 5000, 10000),
-(2, 6, 1, 85000, 85000),
-(2, 2, 1, 12000, 12000);
-*/
+-- Dumping data for table db_mypos.tx_transaction_items: ~160 rows (approximately)
+INSERT INTO `tx_transaction_items` (`id`, `transaction_id`, `product_id`, `qty`, `unit_name`, `price_at_sale`, `subtotal`, `delete_status`) VALUES
+	(1, 1, 4, 2.0000, 'Kg', 18000.00, 36000.00, 0),
+	(2, 1, 1, 3.0000, 'Piece', 3500.00, 10500.00, 0),
+	(3, 1, 8, 4.0000, 'Botol', 42000.00, 168000.00, 0),
+	(4, 1, 6, 2.0000, 'Batang', 1800.00, 3600.00, 0),
+	(5, 2, 6, 2.0000, 'Batang', 1800.00, 3600.00, 0),
+	(6, 3, 3, 3.0000, 'Botol', 18000.00, 54000.00, 0),
+	(7, 4, 5, 5.0000, 'Butir', 2800.00, 14000.00, 0),
+	(8, 4, 10, 2.0000, 'Sachet', 2500.00, 5000.00, 0),
+	(9, 4, 4, 4.0000, 'Kg', 18000.00, 72000.00, 0),
+	(10, 5, 10, 2.0000, 'Sachet', 2500.00, 5000.00, 0),
+	(11, 5, 8, 3.0000, 'Botol', 42000.00, 126000.00, 0),
+	(12, 6, 2, 4.0000, 'Botol', 4000.00, 16000.00, 0),
+	(13, 6, 10, 3.0000, 'Sachet', 2500.00, 7500.00, 0),
+	(14, 6, 1, 2.0000, 'Piece', 3500.00, 7000.00, 0),
+	(15, 6, 4, 4.0000, 'Kg', 18000.00, 72000.00, 0),
+	(16, 7, 5, 5.0000, 'Butir', 2800.00, 14000.00, 0),
+	(17, 8, 6, 5.0000, 'Batang', 1800.00, 9000.00, 0),
+	(18, 8, 10, 2.0000, 'Sachet', 2500.00, 5000.00, 0),
+	(19, 9, 10, 4.0000, 'Sachet', 2500.00, 10000.00, 0),
+	(20, 9, 8, 3.0000, 'Botol', 42000.00, 126000.00, 0),
+	(21, 10, 5, 4.0000, 'Butir', 2800.00, 11200.00, 0),
+	(22, 11, 1, 5.0000, 'Piece', 3500.00, 17500.00, 0),
+	(23, 11, 8, 2.0000, 'Botol', 42000.00, 84000.00, 0),
+	(24, 11, 7, 5.0000, 'Piece', 7000.00, 35000.00, 0),
+	(25, 12, 5, 3.0000, 'Butir', 2800.00, 8400.00, 0),
+	(26, 12, 3, 4.0000, 'Botol', 18000.00, 72000.00, 0),
+	(27, 13, 10, 1.0000, 'Sachet', 2500.00, 2500.00, 0),
+	(28, 13, 4, 5.0000, 'Kg', 18000.00, 90000.00, 0),
+	(29, 14, 6, 2.0000, 'Batang', 1800.00, 3600.00, 0),
+	(30, 14, 10, 5.0000, 'Sachet', 2500.00, 12500.00, 0),
+	(31, 15, 7, 1.0000, 'Piece', 7000.00, 7000.00, 0),
+	(32, 15, 4, 4.0000, 'Kg', 18000.00, 72000.00, 0),
+	(33, 16, 8, 5.0000, 'Botol', 42000.00, 210000.00, 0),
+	(34, 16, 3, 1.0000, 'Botol', 18000.00, 18000.00, 0),
+	(35, 16, 10, 1.0000, 'Sachet', 2500.00, 2500.00, 0),
+	(36, 16, 5, 3.0000, 'Butir', 2800.00, 8400.00, 0),
+	(37, 17, 1, 4.0000, 'Piece', 3500.00, 14000.00, 0),
+	(38, 17, 5, 3.0000, 'Butir', 2800.00, 8400.00, 0),
+	(39, 17, 8, 4.0000, 'Botol', 42000.00, 168000.00, 0),
+	(40, 18, 6, 5.0000, 'Batang', 1800.00, 9000.00, 0),
+	(41, 18, 1, 3.0000, 'Piece', 3500.00, 10500.00, 0),
+	(42, 18, 7, 3.0000, 'Piece', 7000.00, 21000.00, 0),
+	(43, 18, 10, 3.0000, 'Sachet', 2500.00, 7500.00, 0),
+	(44, 19, 6, 3.0000, 'Batang', 1800.00, 5400.00, 0),
+	(45, 19, 4, 3.0000, 'Kg', 18000.00, 54000.00, 0),
+	(46, 20, 2, 5.0000, 'Botol', 4000.00, 20000.00, 0),
+	(47, 20, 6, 5.0000, 'Batang', 1800.00, 9000.00, 0),
+	(48, 20, 10, 3.0000, 'Sachet', 2500.00, 7500.00, 0),
+	(49, 20, 4, 1.0000, 'Kg', 18000.00, 18000.00, 0),
+	(50, 21, 1, 4.0000, 'Piece', 3500.00, 14000.00, 0),
+	(51, 21, 6, 2.0000, 'Batang', 1800.00, 3600.00, 0),
+	(52, 21, 7, 3.0000, 'Piece', 7000.00, 21000.00, 0),
+	(53, 22, 3, 3.0000, 'Botol', 18000.00, 54000.00, 0),
+	(54, 22, 8, 5.0000, 'Botol', 42000.00, 210000.00, 0),
+	(55, 23, 10, 3.0000, 'Sachet', 2500.00, 7500.00, 0),
+	(56, 23, 3, 1.0000, 'Botol', 18000.00, 18000.00, 0),
+	(57, 24, 5, 4.0000, 'Butir', 2800.00, 11200.00, 0),
+	(58, 24, 2, 2.0000, 'Botol', 4000.00, 8000.00, 0),
+	(59, 24, 8, 3.0000, 'Botol', 42000.00, 126000.00, 0),
+	(60, 24, 4, 2.0000, 'Kg', 18000.00, 36000.00, 0),
+	(61, 25, 5, 5.0000, 'Butir', 2800.00, 14000.00, 0),
+	(62, 25, 7, 4.0000, 'Piece', 7000.00, 28000.00, 0),
+	(63, 25, 2, 3.0000, 'Botol', 4000.00, 12000.00, 0),
+	(64, 25, 4, 2.0000, 'Kg', 18000.00, 36000.00, 0),
+	(65, 26, 10, 4.0000, 'Sachet', 2500.00, 10000.00, 0),
+	(66, 26, 8, 3.0000, 'Botol', 42000.00, 126000.00, 0),
+	(67, 27, 5, 5.0000, 'Butir', 2800.00, 14000.00, 0),
+	(68, 27, 6, 1.0000, 'Batang', 1800.00, 1800.00, 0),
+	(69, 27, 7, 4.0000, 'Piece', 7000.00, 28000.00, 0),
+	(70, 27, 4, 3.0000, 'Kg', 18000.00, 54000.00, 0),
+	(71, 28, 5, 4.0000, 'Butir', 2800.00, 11200.00, 0),
+	(72, 28, 4, 5.0000, 'Kg', 18000.00, 90000.00, 0),
+	(73, 29, 10, 1.0000, 'Sachet', 2500.00, 2500.00, 0),
+	(74, 29, 3, 5.0000, 'Botol', 18000.00, 90000.00, 0),
+	(75, 29, 4, 5.0000, 'Kg', 18000.00, 90000.00, 0),
+	(76, 30, 4, 3.0000, 'Kg', 18000.00, 54000.00, 0),
+	(77, 31, 3, 3.0000, 'Botol', 18000.00, 54000.00, 0),
+	(78, 31, 4, 2.0000, 'Kg', 18000.00, 36000.00, 0),
+	(79, 31, 6, 5.0000, 'Batang', 1800.00, 9000.00, 0),
+	(80, 31, 1, 5.0000, 'Piece', 3500.00, 17500.00, 0),
+	(81, 32, 8, 5.0000, 'Botol', 42000.00, 210000.00, 0),
+	(82, 32, 10, 5.0000, 'Sachet', 2500.00, 12500.00, 0),
+	(83, 32, 1, 4.0000, 'Piece', 3500.00, 14000.00, 0),
+	(84, 33, 6, 3.0000, 'Batang', 1800.00, 5400.00, 0),
+	(85, 33, 8, 3.0000, 'Botol', 42000.00, 126000.00, 0),
+	(86, 33, 7, 5.0000, 'Piece', 7000.00, 35000.00, 0),
+	(87, 33, 4, 5.0000, 'Kg', 18000.00, 90000.00, 0),
+	(88, 34, 5, 2.0000, 'Butir', 2800.00, 5600.00, 0),
+	(89, 35, 10, 1.0000, 'Sachet', 2500.00, 2500.00, 0),
+	(90, 35, 5, 2.0000, 'Butir', 2800.00, 5600.00, 0),
+	(91, 35, 6, 4.0000, 'Batang', 1800.00, 7200.00, 0),
+	(92, 36, 4, 1.0000, 'Kg', 18000.00, 18000.00, 0),
+	(93, 36, 2, 3.0000, 'Botol', 4000.00, 12000.00, 0),
+	(94, 36, 5, 1.0000, 'Butir', 2800.00, 2800.00, 0),
+	(95, 37, 8, 1.0000, 'Botol', 42000.00, 42000.00, 0),
+	(96, 38, 7, 1.0000, 'Piece', 7000.00, 7000.00, 0),
+	(97, 38, 5, 3.0000, 'Butir', 2800.00, 8400.00, 0),
+	(98, 38, 10, 3.0000, 'Sachet', 2500.00, 7500.00, 0),
+	(99, 39, 8, 2.0000, 'Botol', 42000.00, 84000.00, 0),
+	(100, 39, 3, 1.0000, 'Botol', 18000.00, 18000.00, 0),
+	(101, 40, 7, 3.0000, 'Piece', 7000.00, 21000.00, 0),
+	(102, 40, 2, 5.0000, 'Botol', 4000.00, 20000.00, 0),
+	(103, 40, 5, 2.0000, 'Butir', 2800.00, 5600.00, 0),
+	(104, 40, 4, 3.0000, 'Kg', 18000.00, 54000.00, 0),
+	(105, 41, 3, 5.0000, 'Botol', 18000.00, 90000.00, 0),
+	(106, 42, 5, 3.0000, 'Butir', 2800.00, 8400.00, 0),
+	(107, 42, 4, 5.0000, 'Kg', 18000.00, 90000.00, 0),
+	(108, 42, 10, 5.0000, 'Sachet', 2500.00, 12500.00, 0),
+	(109, 42, 1, 4.0000, 'Piece', 3500.00, 14000.00, 0),
+	(110, 43, 5, 5.0000, 'Butir', 2800.00, 14000.00, 0),
+	(111, 43, 8, 5.0000, 'Botol', 42000.00, 210000.00, 0),
+	(112, 43, 1, 5.0000, 'Piece', 3500.00, 17500.00, 0),
+	(113, 43, 4, 4.0000, 'Kg', 18000.00, 72000.00, 0),
+	(114, 44, 7, 3.0000, 'Piece', 7000.00, 21000.00, 0),
+	(115, 44, 10, 4.0000, 'Sachet', 2500.00, 10000.00, 0),
+	(116, 44, 1, 1.0000, 'Piece', 3500.00, 3500.00, 0),
+	(117, 44, 4, 2.0000, 'Kg', 18000.00, 36000.00, 0),
+	(118, 45, 3, 3.0000, 'Botol', 18000.00, 54000.00, 0),
+	(119, 45, 1, 5.0000, 'Piece', 3500.00, 17500.00, 0),
+	(120, 45, 2, 4.0000, 'Botol', 4000.00, 16000.00, 0),
+	(121, 46, 4, 1.0000, 'Kg', 18000.00, 18000.00, 0),
+	(122, 46, 2, 3.0000, 'Botol', 4000.00, 12000.00, 0),
+	(123, 47, 1, 3.0000, 'Piece', 3500.00, 10500.00, 0),
+	(124, 48, 8, 3.0000, 'Botol', 42000.00, 126000.00, 0),
+	(125, 48, 2, 5.0000, 'Botol', 4000.00, 20000.00, 0),
+	(126, 49, 5, 4.0000, 'Butir', 2800.00, 11200.00, 0),
+	(127, 50, 1, 5.0000, 'Piece', 3500.00, 17500.00, 0),
+	(128, 51, 7, 5.0000, 'Piece', 7000.00, 35000.00, 0),
+	(129, 52, 7, 3.0000, 'Piece', 7000.00, 21000.00, 0),
+	(130, 53, 8, 4.0000, 'Botol', 42000.00, 168000.00, 0),
+	(131, 53, 5, 5.0000, 'Butir', 2800.00, 14000.00, 0),
+	(132, 53, 10, 4.0000, 'Sachet', 2500.00, 10000.00, 0),
+	(133, 54, 3, 3.0000, 'Botol', 18000.00, 54000.00, 0),
+	(134, 55, 4, 3.0000, 'Kg', 18000.00, 54000.00, 0),
+	(135, 55, 10, 4.0000, 'Sachet', 2500.00, 10000.00, 0),
+	(136, 55, 8, 1.0000, 'Botol', 42000.00, 42000.00, 0),
+	(137, 56, 8, 5.0000, 'Botol', 42000.00, 210000.00, 0),
+	(138, 56, 1, 5.0000, 'Piece', 3500.00, 17500.00, 0),
+	(139, 56, 5, 3.0000, 'Butir', 2800.00, 8400.00, 0),
+	(140, 57, 1, 1.0000, 'Piece', 3500.00, 3500.00, 0),
+	(141, 57, 8, 5.0000, 'Botol', 42000.00, 210000.00, 0),
+	(142, 58, 5, 3.0000, 'Butir', 2800.00, 8400.00, 0),
+	(143, 58, 3, 4.0000, 'Botol', 18000.00, 72000.00, 0),
+	(144, 59, 3, 4.0000, 'Botol', 18000.00, 72000.00, 0),
+	(145, 59, 8, 3.0000, 'Botol', 42000.00, 126000.00, 0),
+	(146, 60, 8, 1.0000, 'Botol', 42000.00, 42000.00, 0),
+	(147, 60, 4, 3.0000, 'Kg', 18000.00, 54000.00, 0),
+	(148, 60, 5, 1.0000, 'Butir', 2800.00, 2800.00, 0),
+	(149, 60, 2, 2.0000, 'Botol', 4000.00, 8000.00, 0),
+	(150, 61, 4, 5.0000, 'Kg', 18000.00, 90000.00, 0),
+	(151, 62, 3, 1.0000, 'Botol', 18000.00, 18000.00, 0),
+	(152, 62, 7, 5.0000, 'Piece', 7000.00, 35000.00, 0),
+	(153, 63, 3, 3.0000, 'Botol', 18000.00, 54000.00, 0),
+	(154, 63, 1, 1.0000, 'Piece', 3500.00, 3500.00, 0),
+	(155, 63, 7, 4.0000, 'Piece', 7000.00, 28000.00, 0),
+	(156, 63, 10, 5.0000, 'Sachet', 2500.00, 12500.00, 0),
+	(157, 64, 3, 1.0000, 'Botol', 18000.00, 18000.00, 0),
+	(158, 65, 2, 2.0000, 'Botol', 4000.00, 8000.00, 0),
+	(159, 65, 5, 4.0000, 'Butir', 2800.00, 11200.00, 0),
+	(160, 65, 4, 4.0000, 'Kg', 18000.00, 72000.00, 0);
 
--- =====================================================
--- SELESAI
--- Database siap digunakan!
--- =====================================================
+-- Dumping structure for table db_mypos.tx_transactions
+CREATE TABLE IF NOT EXISTS `tx_transactions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date` datetime DEFAULT current_timestamp(),
+  `invoice_number` varchar(50) NOT NULL,
+  `cashier_id` int(11) DEFAULT NULL,
+  `customer_id` int(11) DEFAULT NULL,
+  `subtotal` decimal(15,2) NOT NULL,
+  `tax_amount` decimal(15,2) DEFAULT 0.00,
+  `discount_amount` decimal(15,2) DEFAULT 0.00,
+  `total_amount` decimal(15,2) NOT NULL,
+  `pay_method` varchar(50) DEFAULT NULL,
+  `cash_received` decimal(15,2) DEFAULT 0.00,
+  `change_amount` decimal(15,2) DEFAULT 0.00,
+  `delete_status` tinyint(1) DEFAULT 0,
+  `created_date` datetime DEFAULT current_timestamp(),
+  `status` varchar(20) DEFAULT 'completed',
+  PRIMARY KEY (`id`),
+  KEY `cashier_id` (`cashier_id`),
+  KEY `customer_id` (`customer_id`),
+  CONSTRAINT `1` FOREIGN KEY (`cashier_id`) REFERENCES `m_users` (`id`),
+  CONSTRAINT `2` FOREIGN KEY (`customer_id`) REFERENCES `m_customers` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- Dumping data for table db_mypos.tx_transactions: ~65 rows (approximately)
+INSERT INTO `tx_transactions` (`id`, `date`, `invoice_number`, `cashier_id`, `customer_id`, `subtotal`, `tax_amount`, `discount_amount`, `total_amount`, `pay_method`, `cash_received`, `change_amount`, `delete_status`, `created_date`, `status`) VALUES
+	(1, '2026-01-06 23:08:33', 'INV/20260106/8343', 1, 3, 218100.00, 0.00, 0.00, 218100.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:08:33', 'completed'),
+	(2, '2026-01-06 08:08:33', 'INV/20260106/6046', 2, 2, 3600.00, 0.00, 0.00, 3600.00, 'QRIS', 0.00, 0.00, 0, '2026-01-11 00:08:34', 'completed'),
+	(3, '2026-01-10 17:08:33', 'INV/20260110/1638', 1, 3, 54000.00, 0.00, 0.00, 54000.00, 'QRIS', 0.00, 0.00, 0, '2026-01-11 00:08:35', 'completed'),
+	(4, '2026-01-06 16:08:33', 'INV/20260106/6658', 3, 1, 91000.00, 0.00, 0.00, 91000.00, 'QRIS', 0.00, 0.00, 0, '2026-01-11 00:08:35', 'completed'),
+	(5, '2026-01-05 11:08:33', 'INV/20260105/6977', 2, 1, 131000.00, 0.00, 0.00, 131000.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:08:36', 'completed'),
+	(6, '2026-01-05 21:08:33', 'INV/20260105/9312', 4, 2, 102500.00, 0.00, 0.00, 102500.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:36', 'completed'),
+	(7, '2026-01-07 00:08:33', 'INV/20260107/1426', 2, 4, 14000.00, 0.00, 0.00, 14000.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:37', 'completed'),
+	(8, '2026-01-09 17:08:33', 'INV/20260109/5640', 2, 1, 14000.00, 0.00, 0.00, 14000.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:38', 'completed'),
+	(9, '2026-01-10 13:08:33', 'INV/20260110/6733', 1, 2, 136000.00, 0.00, 0.00, 136000.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:39', 'completed'),
+	(10, '2026-01-10 15:08:33', 'INV/20260110/3859', 2, 4, 11200.00, 0.00, 0.00, 11200.00, 'QRIS', 0.00, 0.00, 0, '2026-01-11 00:08:39', 'completed'),
+	(11, '2025-12-18 09:08:33', 'INV/20251218/3427', 3, 4, 136500.00, 0.00, 0.00, 136500.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:40', 'completed'),
+	(12, '2025-12-17 00:08:33', 'INV/20251217/8948', 4, 2, 80400.00, 0.00, 0.00, 80400.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:40', 'completed'),
+	(13, '2025-12-16 14:08:33', 'INV/20251216/8528', 3, 2, 92500.00, 0.00, 0.00, 92500.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:41', 'completed'),
+	(14, '2025-12-17 07:08:33', 'INV/20251217/2647', 4, 2, 16100.00, 0.00, 0.00, 16100.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:08:42', 'completed'),
+	(15, '2025-12-21 08:08:33', 'INV/20251221/1589', 3, 5, 79000.00, 0.00, 0.00, 79000.00, 'QRIS', 0.00, 0.00, 0, '2026-01-11 00:08:42', 'completed'),
+	(16, '2025-12-19 07:08:33', 'INV/20251219/7354', 2, 2, 238900.00, 0.00, 0.00, 238900.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:43', 'completed'),
+	(17, '2025-12-21 16:08:33', 'INV/20251221/9658', 4, 4, 190400.00, 0.00, 0.00, 190400.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:08:44', 'completed'),
+	(18, '2025-12-16 09:08:33', 'INV/20251216/1774', 4, 5, 48000.00, 0.00, 0.00, 48000.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:08:45', 'completed'),
+	(19, '2025-12-17 17:08:33', 'INV/20251217/4441', 1, 3, 59400.00, 0.00, 0.00, 59400.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:46', 'completed'),
+	(20, '2025-12-20 07:08:33', 'INV/20251220/9433', 1, 3, 54500.00, 0.00, 0.00, 54500.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:46', 'completed'),
+	(21, '2025-11-30 03:08:33', 'INV/20251130/2383', 4, 5, 38600.00, 0.00, 0.00, 38600.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:47', 'completed'),
+	(22, '2025-11-26 17:08:33', 'INV/20251126/4539', 4, 4, 264000.00, 0.00, 0.00, 264000.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:48', 'completed'),
+	(23, '2025-11-27 08:08:33', 'INV/20251127/9111', 2, 1, 25500.00, 0.00, 0.00, 25500.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:08:49', 'completed'),
+	(24, '2025-11-30 08:08:33', 'INV/20251130/9652', 3, 1, 181200.00, 0.00, 0.00, 181200.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:50', 'completed'),
+	(25, '2025-11-30 11:08:33', 'INV/20251130/4044', 4, 3, 90000.00, 0.00, 0.00, 90000.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:08:50', 'completed'),
+	(26, '2025-11-27 15:08:33', 'INV/20251127/4237', 1, 5, 136000.00, 0.00, 0.00, 136000.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:08:51', 'completed'),
+	(27, '2025-11-30 02:08:33', 'INV/20251130/4610', 1, 3, 97800.00, 0.00, 0.00, 97800.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:51', 'completed'),
+	(28, '2025-11-28 22:08:33', 'INV/20251128/3378', 2, 4, 101200.00, 0.00, 0.00, 101200.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:08:52', 'completed'),
+	(29, '2025-12-01 23:08:33', 'INV/20251201/8812', 2, 2, 182500.00, 0.00, 0.00, 182500.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:08:53', 'completed'),
+	(30, '2025-11-30 05:08:33', 'INV/20251130/2148', 2, 2, 54000.00, 0.00, 0.00, 54000.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:53', 'completed'),
+	(31, '2025-12-01 23:08:33', 'INV/20251201/4351', 3, 2, 116500.00, 0.00, 0.00, 116500.00, 'QRIS', 0.00, 0.00, 0, '2026-01-11 00:08:54', 'completed'),
+	(32, '2025-11-28 17:08:33', 'INV/20251128/5558', 4, 5, 236500.00, 0.00, 0.00, 236500.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:55', 'completed'),
+	(33, '2025-11-26 09:08:33', 'INV/20251126/8134', 2, 3, 256400.00, 0.00, 0.00, 256400.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:55', 'completed'),
+	(34, '2025-11-26 12:08:33', 'INV/20251126/2365', 3, 3, 5600.00, 0.00, 0.00, 5600.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:08:56', 'completed'),
+	(35, '2025-11-26 22:08:33', 'INV/20251126/8040', 2, 4, 15300.00, 0.00, 0.00, 15300.00, 'QRIS', 0.00, 0.00, 0, '2026-01-11 00:08:57', 'completed'),
+	(36, '2025-06-20 09:08:33', 'INV/20250620/3328', 1, 3, 32800.00, 0.00, 0.00, 32800.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:08:57', 'completed'),
+	(37, '2025-06-24 23:08:33', 'INV/20250624/5244', 3, 3, 42000.00, 0.00, 0.00, 42000.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:08:58', 'completed'),
+	(38, '2025-06-19 08:08:33', 'INV/20250619/8692', 1, 5, 22900.00, 0.00, 0.00, 22900.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:08:58', 'completed'),
+	(39, '2025-06-21 07:08:33', 'INV/20250621/3358', 1, 3, 102000.00, 0.00, 0.00, 102000.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:08:59', 'completed'),
+	(40, '2025-06-23 21:08:33', 'INV/20250623/1158', 2, 3, 100600.00, 0.00, 0.00, 100600.00, 'QRIS', 0.00, 0.00, 0, '2026-01-11 00:09:00', 'completed'),
+	(41, '2025-06-20 19:08:33', 'INV/20250620/9276', 3, 4, 90000.00, 0.00, 0.00, 90000.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:09:00', 'completed'),
+	(42, '2025-06-21 12:08:33', 'INV/20250621/9631', 1, 3, 124900.00, 0.00, 0.00, 124900.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:09:01', 'completed'),
+	(43, '2025-06-24 22:08:33', 'INV/20250624/6591', 2, 3, 313500.00, 0.00, 0.00, 313500.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:09:02', 'completed'),
+	(44, '2025-06-23 21:08:33', 'INV/20250623/5512', 2, 3, 70500.00, 0.00, 0.00, 70500.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:09:02', 'completed'),
+	(45, '2025-06-22 07:08:33', 'INV/20250622/7183', 2, 2, 87500.00, 0.00, 0.00, 87500.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:09:03', 'completed'),
+	(46, '2025-06-19 02:08:33', 'INV/20250619/6353', 2, 1, 30000.00, 0.00, 0.00, 30000.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:09:04', 'completed'),
+	(47, '2025-06-20 02:08:33', 'INV/20250620/8235', 1, 5, 10500.00, 0.00, 0.00, 10500.00, 'QRIS', 0.00, 0.00, 0, '2026-01-11 00:09:04', 'completed'),
+	(48, '2025-06-24 07:08:33', 'INV/20250624/4726', 3, 2, 146000.00, 0.00, 0.00, 146000.00, 'QRIS', 0.00, 0.00, 0, '2026-01-11 00:09:05', 'completed'),
+	(49, '2025-06-19 07:08:33', 'INV/20250619/7661', 3, 1, 11200.00, 0.00, 0.00, 11200.00, 'QRIS', 0.00, 0.00, 0, '2026-01-11 00:09:05', 'completed'),
+	(50, '2025-06-19 21:08:33', 'INV/20250619/9496', 1, 1, 17500.00, 0.00, 0.00, 17500.00, 'QRIS', 0.00, 0.00, 0, '2026-01-11 00:09:06', 'completed'),
+	(51, '2025-06-23 02:08:33', 'INV/20250623/1629', 1, 2, 35000.00, 0.00, 0.00, 35000.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:09:07', 'completed'),
+	(52, '2025-06-22 01:08:33', 'INV/20250622/5996', 2, 4, 21000.00, 0.00, 0.00, 21000.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:09:07', 'completed'),
+	(53, '2025-06-20 05:08:33', 'INV/20250620/3363', 1, 5, 192000.00, 0.00, 0.00, 192000.00, 'QRIS', 0.00, 0.00, 0, '2026-01-11 00:09:08', 'completed'),
+	(54, '2025-06-25 00:08:33', 'INV/20250625/7647', 1, 4, 54000.00, 0.00, 0.00, 54000.00, 'QRIS', 0.00, 0.00, 0, '2026-01-11 00:09:09', 'completed'),
+	(55, '2025-06-23 06:08:33', 'INV/20250623/8280', 2, 2, 106000.00, 0.00, 0.00, 106000.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:09:10', 'completed'),
+	(56, '2024-12-02 18:08:33', 'INV/20241202/7933', 2, 1, 235900.00, 0.00, 0.00, 235900.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:09:10', 'completed'),
+	(57, '2024-12-03 15:08:33', 'INV/20241203/7313', 2, 1, 213500.00, 0.00, 0.00, 213500.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:09:11', 'completed'),
+	(58, '2024-12-05 09:08:33', 'INV/20241205/1917', 4, 5, 80400.00, 0.00, 0.00, 80400.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:09:12', 'completed'),
+	(59, '2024-12-05 21:08:33', 'INV/20241205/3657', 3, 3, 198000.00, 0.00, 0.00, 198000.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:09:12', 'completed'),
+	(60, '2024-12-05 05:08:33', 'INV/20241205/1148', 4, 2, 106800.00, 0.00, 0.00, 106800.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:09:13', 'completed'),
+	(61, '2024-12-01 19:08:33', 'INV/20241201/7858', 1, 2, 90000.00, 0.00, 0.00, 90000.00, 'QRIS', 0.00, 0.00, 0, '2026-01-11 00:09:14', 'completed'),
+	(62, '2024-12-06 16:08:33', 'INV/20241206/4936', 1, 4, 53000.00, 0.00, 0.00, 53000.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:09:14', 'completed'),
+	(63, '2024-12-01 16:08:33', 'INV/20241201/6038', 2, 4, 98000.00, 0.00, 0.00, 98000.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:09:15', 'completed'),
+	(64, '2024-12-06 16:08:33', 'INV/20241206/4459', 1, 2, 18000.00, 0.00, 0.00, 18000.00, 'OVO', 0.00, 0.00, 0, '2026-01-11 00:09:16', 'completed'),
+	(65, '2024-12-02 06:08:33', 'INV/20241202/9591', 3, 1, 91200.00, 0.00, 0.00, 91200.00, 'Cash', 0.00, 0.00, 0, '2026-01-11 00:09:17', 'completed');
+
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
