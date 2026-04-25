@@ -53,51 +53,60 @@
                 </StackPanel>
 
                 <!-- Navigation Menu -->
-                <StackPanel Grid.Row="1" Spacing="4">
+                <StackPanel Grid.Row="1">
                     <Button Content="🛒 Point of Sale" 
                             Style="{StaticResource SidebarButton}"
                             Command="{Binding SetViewCommand}"
-                            CommandParameter="POS" />
+                            CommandParameter="POS" 
+                            Margin="0,0,0,4"/>
                     
                     <Button Content="📦 Inventory" 
                             Style="{StaticResource SidebarButton}"
                             Command="{Binding SetViewCommand}"
-                            CommandParameter="Inventory" />
+                            CommandParameter="Inventory" 
+                            Margin="0,0,0,4"/>
                     
                     <Button Content="📋 Purchase Orders" 
                             Style="{StaticResource SidebarButton}"
                             Command="{Binding SetViewCommand}"
-                            CommandParameter="PurchaseOrders" />
+                            CommandParameter="PurchaseOrders" 
+                            Margin="0,0,0,4"/>
                     
                     <Button Content="🏷️ Categories" 
                             Style="{StaticResource SidebarButton}"
                             Command="{Binding SetViewCommand}"
-                            CommandParameter="Categories" />
+                            CommandParameter="Categories" 
+                            Margin="0,0,0,4"/>
                     
                     <Button Content="👥 Customers" 
                             Style="{StaticResource SidebarButton}"
                             Command="{Binding SetViewCommand}"
-                            CommandParameter="Customers" />
+                            CommandParameter="Customers" 
+                            Margin="0,0,0,4"/>
                     
                     <Button Content="🚚 Vendors" 
                             Style="{StaticResource SidebarButton}"
                             Command="{Binding SetViewCommand}"
-                            CommandParameter="Vendors" />
+                            CommandParameter="Vendors" 
+                            Margin="0,0,0,4"/>
                     
                     <Button Content="📊 Sales History" 
                             Style="{StaticResource SidebarButton}"
                             Command="{Binding SetViewCommand}"
-                            CommandParameter="SalesHistory" />
+                            CommandParameter="SalesHistory" 
+                            Margin="0,0,0,4"/>
                     
                     <Button Content="📈 Reports" 
                             Style="{StaticResource SidebarButton}"
                             Command="{Binding SetViewCommand}"
-                            CommandParameter="Reports" />
+                            CommandParameter="Reports" 
+                            Margin="0,0,0,4"/>
                     
                     <Button Content="👤 Users" 
                             Style="{StaticResource SidebarButton}"
                             Command="{Binding SetViewCommand}"
-                            CommandParameter="Users" />
+                            CommandParameter="Users" 
+                            Margin="0,0,0,4"/>
                 </StackPanel>
 
                 <!-- User Info -->
@@ -362,11 +371,12 @@
                                    Visibility="{Binding StatusMessage, Converter={StaticResource StringToVisibilityConverter}, FallbackValue=Collapsed}" />
 
                         <!-- Action Buttons -->
-                        <StackPanel Grid.Row="4" Spacing="8">
+                        <StackPanel Grid.Row="4" Margin="0,0,0,8">
                             <Button Content="💳 Process Payment" 
                                     Style="{StaticResource SuccessButton}"
                                     Command="{Binding ProcessSaleCommand}"
-                                    IsEnabled="{Binding IsProcessing, Converter={StaticResource InverseBoolConverter}}" />
+                                    IsEnabled="{Binding IsProcessing, Converter={StaticResource InverseBoolConverter}}" 
+                                    Margin="0,0,0,8"/>
                             
                             <Button Content="🗑️ Clear Cart" 
                                     Style="{StaticResource SecondaryButton}"
