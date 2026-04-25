@@ -18,6 +18,11 @@ namespace AMSA.POS.Desktop.Models
         public DateTime? DeleteDate { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
+        
+        // Helper properties for UI
+        public decimal Price { get; set; }
+        public decimal Stock { get; set; }
+        public string CategoryName { get; set; } = string.Empty;
     }
 
     public class ProductUnit
@@ -171,5 +176,64 @@ namespace AMSA.POS.Desktop.Models
         public decimal UnitPrice { get; set; }
         public decimal Subtotal { get; set; }
         public int DeleteStatus { get; set; }
+    }
+
+    // Helper models for backward compatibility with existing code
+    public class Sale
+    {
+        public int Id { get; set; }
+        public string InvoiceNumber { get; set; } = string.Empty;
+        public int? CustomerId { get; set; }
+        public int? UserId { get; set; }
+        public DateTime SaleDate { get; set; }
+        public decimal Subtotal { get; set; }
+        public decimal Tax { get; set; }
+        public decimal Discount { get; set; }
+        public decimal Total { get; set; }
+        public string PaymentMethod { get; set; } = string.Empty;
+        public string PaymentStatus { get; set; } = string.Empty;
+        public decimal AmountPaid { get; set; }
+        public decimal ChangeAmount { get; set; }
+        public string Notes { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public string CustomerName { get; set; } = string.Empty;
+        public List<SaleItem> Items { get; set; } = new();
+    }
+
+    public class SaleItem
+    {
+        public int Id { get; set; }
+        public int? SaleId { get; set; }
+        public int? ProductId { get; set; }
+        public string ProductName { get; set; } = string.Empty;
+        public decimal Quantity { get; set; }
+        public decimal Price { get; set; }
+        public decimal Total { get; set; }
+        public decimal Discount { get; set; }
+    }
+
+    public class PurchaseOrder
+    {
+        public int Id { get; set; }
+        public string PoNumber { get; set; } = string.Empty;
+        public int? VendorId { get; set; }
+        public string VendorName { get; set; } = string.Empty;
+        public DateTime OrderDate { get; set; }
+        public DateTime? ExpectedDate { get; set; }
+        public string Status { get; set; } = string.Empty;
+        public decimal TotalAmount { get; set; }
+        public string Notes { get; set; } = string.Empty;
+        public List<PurchaseOrderItem> Items { get; set; } = new();
+    }
+
+    public class PurchaseOrderItem
+    {
+        public int Id { get; set; }
+        public int? PurchaseOrderId { get; set; }
+        public int? ProductId { get; set; }
+        public string ProductName { get; set; } = string.Empty;
+        public decimal Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
+        public decimal Subtotal { get; set; }
     }
 }
