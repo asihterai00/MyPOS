@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
 using AMSA.POS.Desktop.Models;
@@ -91,11 +94,8 @@ namespace AMSA.POS.Desktop.Services
 
         public async Task InitializeDatabaseAsync()
         {
-            using var connection = CreateConnection();
+            var connection = (MySqlConnection)CreateConnection();
             await connection.OpenAsync();
-
-            // Database and tables already exist in db_mypos.sql
-            // This method can be used for future migrations if needed
         }
     }
 }

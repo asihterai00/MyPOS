@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:vm="clr-namespace:AMSA.POS.Desktop.ViewModels"
         mc:Ignorable="d"
         Title="{Binding WindowTitle}" 
         Height="800" 
@@ -13,10 +12,6 @@
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource PrimaryDarkBrush}"
         GlowBrush="{StaticResource AccentBrush}">
-
-    <mah:MetroWindow.DataContext>
-        <vm:MainWindowViewModel />
-    </mah:MetroWindow.DataContext>
 
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
@@ -222,7 +217,9 @@
                                             <Border Grid.Row="0" 
                                                     Background="{StaticResource PrimaryDarkBrush}" 
                                                     CornerRadius="8"
-                                                    Margin="0,0,0,12">
+                                                    Margin="0,0,0,12"
+                                                    Cursor="Hand"
+                                                    MouseLeftButtonDown="ProductCard_MouseLeftButtonDown">
                                                 <TextBlock Text="📦" 
                                                            FontSize="48" 
                                                            HorizontalAlignment="Center" 
@@ -260,7 +257,8 @@
                                                         Width="32" 
                                                         Height="32" 
                                                         Style="{StaticResource SuccessButton}"
-                                                        materialDesign:ButtonAssist.CornerRadius="16" />
+                                                        materialDesign:ButtonAssist.CornerRadius="16"
+                                                        Click="AddProductButton_Click" />
                                             </Grid>
                                         </Grid>
                                     </Border>
@@ -367,15 +365,13 @@
                                    Text="{Binding StatusMessage}" 
                                    Style="{StaticResource MutedText}" 
                                    TextWrapping="Wrap"
-                                   Margin="0,0,0,16"
-                                   Visibility="{Binding StatusMessage, Converter={StaticResource StringToVisibilityConverter}, FallbackValue=Collapsed}" />
+                                   Margin="0,0,0,16" />
 
                         <!-- Action Buttons -->
                         <StackPanel Grid.Row="4" Margin="0,0,0,8">
                             <Button Content="💳 Process Payment" 
                                     Style="{StaticResource SuccessButton}"
                                     Command="{Binding ProcessSaleCommand}"
-                                    IsEnabled="{Binding IsProcessing, Converter={StaticResource InverseBoolConverter}}" 
                                     Margin="0,0,0,8"/>
                             
                             <Button Content="🗑️ Clear Cart" 

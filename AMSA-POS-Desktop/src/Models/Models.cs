@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace AMSA.POS.Desktop.Models
 {
     public class Product

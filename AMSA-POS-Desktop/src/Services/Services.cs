@@ -1,5 +1,10 @@
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
+using MySqlConnector;
 using AMSA.POS.Desktop.Models;
 
 namespace AMSA.POS.Desktop.Services
@@ -282,7 +287,7 @@ namespace AMSA.POS.Desktop.Services
 
         public async Task<Sale?> GetByIdAsync(int id)
         {
-            using var connection = _dbService.CreateConnection();
+            using var connection = (MySqlConnection)_dbService.CreateConnection();
             var sql = @"
                 SELECT s.id, s.invoice_number, s.customer_id, s.user_id, s.sale_date, s.subtotal, s.discount, s.tax, s.total, 
                        s.payment_method, s.payment_status, s.amount_paid, s.change_amount, s.notes,
@@ -290,15 +295,19 @@ namespace AMSA.POS.Desktop.Services
                 FROM sales s 
                 LEFT JOIN customers c ON s.customer_id = c.id 
                 WHERE s.id = @Id";
-            var sale = await connection.QueryFirstOrDefaultAsync<Sale, Customer, Sale>(
+            
+            var results = await connection.QueryAsync<Sale, Customer, Sale>(
                 sql,
                 (s, customer) =>
                 {
                     s.CustomerName = customer?.Name ?? string.Empty;
                     return s;
                 },
+                new { Id = id },
                 splitOn: "CustomerName"
             );
+
+            var sale = results.FirstOrDefault();
 
             if (sale != null)
             {
@@ -311,7 +320,7 @@ namespace AMSA.POS.Desktop.Services
 
         public async Task<int> CreateAsync(Sale sale)
         {
-            using var connection = _dbService.CreateConnection();
+            using var connection = (MySqlConnection)_dbService.CreateConnection();
             await connection.OpenAsync();
             using var transaction = connection.BeginTransaction();
 
@@ -344,7 +353,7 @@ namespace AMSA.POS.Desktop.Services
                     }, transaction);
 
                     // Update stock
-                    await _productService.UpdateStockAsync(item.ProductId, -item.Quantity);
+                    await _productService.UpdateStockAsync(item.ProductId ?? 0, (int)-item.Quantity);
                 }
 
                 transaction.Commit();
@@ -425,7 +434,7 @@ namespace AMSA.POS.Desktop.Services
 
         public async Task<PurchaseOrder?> GetByIdAsync(int id)
         {
-            using var connection = _dbService.CreateConnection();
+            using var connection = (MySqlConnection)_dbService.CreateConnection();
             var sql = @"
                 SELECT po.id, po.po_number, po.vendor_id, po.order_date, po.expected_date, po.status, po.total_amount, po.notes,
                        v.name as VendorName 
@@ -433,15 +442,18 @@ namespace AMSA.POS.Desktop.Services
                 LEFT JOIN vendors v ON po.vendor_id = v.id 
                 WHERE po.id = @Id";
             
-            var order = await connection.QueryFirstOrDefaultAsync<PurchaseOrder, Vendor, PurchaseOrder>(
+            var results = await connection.QueryAsync<PurchaseOrder, Vendor, PurchaseOrder>(
                 sql,
                 (o, vendor) =>
                 {
                     o.VendorName = vendor?.Name ?? string.Empty;
                     return o;
                 },
+                new { Id = id },
                 splitOn: "VendorName"
             );
+
+            var order = results.FirstOrDefault();
 
             if (order != null)
             {
@@ -454,18 +466,18 @@ namespace AMSA.POS.Desktop.Services
 
         public async Task<int> CreateAsync(PurchaseOrder order)
         {
-            using var connection = _dbService.CreateConnection();
+            using var connection = (MySqlConnection)_dbService.CreateConnection();
             await connection.OpenAsync();
             using var transaction = connection.BeginTransaction();
 
             try
             {
                 var poNumber = await GeneratePONumberAsync();
-                order.PONumber = poNumber;
+                order.PoNumber = poNumber;
 
                 var sql = @"
                     INSERT INTO purchase_orders (po_number, vendor_id, order_date, expected_date, status, total_amount, notes) 
-                    VALUES (@PONumber, @VendorId, @OrderDate, @ExpectedDate, @Status, @TotalAmount, @Notes);
+                    VALUES (@PoNumber, @VendorId, @OrderDate, @ExpectedDate, @Status, @TotalAmount, @Notes);
                     SELECT LAST_INSERT_ID();";
                 
                 var orderId = await connection.ExecuteScalarAsync<int>(sql, order, transaction);
@@ -475,14 +487,14 @@ namespace AMSA.POS.Desktop.Services
                 {
                     var itemSql = @"
                         INSERT INTO purchase_order_items (po_id, product_id, quantity, unit_price, subtotal, received_quantity) 
-                        VALUES (@PurchaseOrderId, @ProductId, @Quantity, @Cost, @Total, 0)";
+                        VALUES (@PurchaseOrderId, @ProductId, @Quantity, @UnitPrice, @Subtotal, 0)";
                     await connection.ExecuteAsync(itemSql, new
                     {
                         PurchaseOrderId = orderId,
-                        ProductId = item.ProductId,
+                        ProductId = item.ProductId ?? 0,
                         Quantity = item.Quantity,
-                        Cost = item.Cost,
-                        Total = item.Total
+                        UnitPrice = item.UnitPrice,
+                        Subtotal = item.Subtotal
                     }, transaction);
                 }
 
